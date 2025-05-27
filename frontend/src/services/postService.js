@@ -24,7 +24,7 @@ const samplePosts = [
     readTime: "8분",
     author: "카카오",
     createdAt: "2025-05-27T10:00:00",
-    url: "https://tech.kakao.com/2023/03/15/react-18-features/"
+    url: "https://whatthaburger.tistory.com/"
   },
   {
     id: 2,
