@@ -161,44 +161,40 @@ const samplePosts = [
 ]
 
 export const postService = {
-  // 모든 포스트 가져오기 (하드코딩된 데이터 사용)
+  // 모든 포스트 가져오기 (실제 API 호출)
   async getAllPosts() {
     try {
-      // 실제 API 호출 대신 하드코딩된 데이터 반환
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve(samplePosts)
-        }, 500) // 로딩 시뮬레이션
-      })
+      const response = await api.get('/')
+      return response.data
     } catch (error) {
       console.error('포스트 조회 실패:', error)
-      throw error
+      // API 실패 시 하드코딩된 데이터로 폴백
+      return samplePosts
     }
   },
 
   // 페이지네이션으로 포스트 가져오기
   async getPostsWithPagination(page = 0, size = 10) {
     try {
-      // 하드코딩된 데이터에서 페이지네이션 처리
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          const sortedPosts = [...samplePosts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-          const start = page * size
-          const end = start + size
-          const content = sortedPosts.slice(start, end)
-          
-          resolve({
-            content: content,
-            totalElements: samplePosts.length,
-            totalPages: Math.ceil(samplePosts.length / size),
-            number: page,
-            size: size
-          })
-        }, 300)
+      const response = await api.get('/page', {
+        params: { page, size }
       })
+      return response.data
     } catch (error) {
       console.error('페이지네이션 포스트 조회 실패:', error)
-      throw error
+      // API 실패 시 하드코딩된 데이터로 폴백
+      const sortedPosts = [...samplePosts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      const start = page * size
+      const end = start + size
+      const content = sortedPosts.slice(start, end)
+      
+      return {
+        content: content,
+        totalElements: samplePosts.length,
+        totalPages: Math.ceil(samplePosts.length / size),
+        number: page,
+        size: size
+      }
     }
   },
 
@@ -225,16 +221,13 @@ export const postService = {
   // 최신 포스트 가져오기 (개수 제한)
   async getLatestPosts() {
     try {
-      // 하드코딩된 데이터에서 최신 3개 반환
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          const sortedPosts = [...samplePosts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-          resolve(sortedPosts.slice(0, 3))
-        }, 300)
-      })
+      const response = await api.get('/latest')
+      return response.data
     } catch (error) {
       console.error('최신 포스트 조회 실패:', error)
-      throw error
+      // API 실패 시 하드코딩된 데이터로 폴백
+      const sortedPosts = [...samplePosts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      return sortedPosts.slice(0, 3)
     }
   },
 
@@ -246,59 +239,52 @@ export const postService = {
   // 카테고리별 포스트 가져오기
   async getPostsByCategory(category) {
     try {
-      // 하드코딩된 데이터에서 카테고리별 필터링
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          const filteredPosts = samplePosts.filter(post => 
-            post.category === category
-          ).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-          resolve(filteredPosts)
-        }, 300)
-      })
+      const response = await api.get(`/category/${encodeURIComponent(category)}`)
+      return response.data
     } catch (error) {
       console.error('카테고리별 포스트 조회 실패:', error)
-      throw error
+      // API 실패 시 하드코딩된 데이터로 폴백
+      const filteredPosts = samplePosts.filter(post => 
+        post.category === category
+      ).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      return filteredPosts
     }
   },
 
   // 회사별 포스트 가져오기
   async getPostsByCompany(company) {
     try {
-      // 하드코딩된 데이터에서 회사별 필터링
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          const filteredPosts = samplePosts.filter(post => 
-            post.company === company
-          ).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-          resolve(filteredPosts)
-        }, 300)
-      })
+      const response = await api.get(`/company/${encodeURIComponent(company)}`)
+      return response.data
     } catch (error) {
       console.error('회사별 포스트 조회 실패:', error)
-      throw error
+      // API 실패 시 하드코딩된 데이터로 폴백
+      const filteredPosts = samplePosts.filter(post => 
+        post.company === company
+      ).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      return filteredPosts
     }
   },
 
   // 검색
   async searchPosts(keyword) {
     try {
-      // 하드코딩된 데이터에서 키워드 검색
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          const query = keyword.toLowerCase()
-          const filteredPosts = samplePosts.filter(post =>
-            post.title.toLowerCase().includes(query) ||
-            post.content.toLowerCase().includes(query) ||
-            post.company.toLowerCase().includes(query) ||
-            post.category.toLowerCase().includes(query) ||
-            (post.tags && post.tags.some(tag => tag.toLowerCase().includes(query)))
-          ).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-          resolve(filteredPosts)
-        }, 300)
+      const response = await api.get('/search', {
+        params: { keyword }
       })
+      return response.data
     } catch (error) {
       console.error('포스트 검색 실패:', error)
-      throw error
+      // API 실패 시 하드코딩된 데이터로 폴백
+      const query = keyword.toLowerCase()
+      const filteredPosts = samplePosts.filter(post =>
+        post.title.toLowerCase().includes(query) ||
+        post.content.toLowerCase().includes(query) ||
+        post.company.toLowerCase().includes(query) ||
+        post.category.toLowerCase().includes(query) ||
+        (post.tags && post.tags.some(tag => tag.toLowerCase().includes(query)))
+      ).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      return filteredPosts
     }
   },
 
@@ -338,32 +324,26 @@ export const postService = {
   // 카테고리 목록 조회
   async getCategories() {
     try {
-      // 하드코딩된 데이터에서 고유 카테고리 추출
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          const categories = [...new Set(samplePosts.map(post => post.category))]
-          resolve(categories)
-        }, 200)
-      })
+      const response = await api.get('/categories')
+      return response.data
     } catch (error) {
       console.error('카테고리 조회 실패:', error)
-      throw error
+      // API 실패 시 하드코딩된 데이터로 폴백
+      const categories = [...new Set(samplePosts.map(post => post.category))]
+      return categories
     }
   },
 
   // 회사 목록 조회
   async getCompanies() {
     try {
-      // 하드코딩된 데이터에서 고유 회사 추출
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          const companies = [...new Set(samplePosts.map(post => post.company))]
-          resolve(companies)
-        }, 200)
-      })
+      const response = await api.get('/companies')
+      return response.data
     } catch (error) {
       console.error('회사 목록 조회 실패:', error)
-      throw error
+      // API 실패 시 하드코딩된 데이터로 폴백
+      const companies = [...new Set(samplePosts.map(post => post.company))]
+      return companies
     }
   }
 } 

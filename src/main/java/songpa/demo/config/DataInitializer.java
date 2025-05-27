@@ -8,7 +8,8 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
-@Component
+// @Component 주석 처리하여 DataInitializer 비활성화
+// @Component
 public class DataInitializer implements CommandLineRunner {
     
     @Autowired
@@ -16,13 +17,15 @@ public class DataInitializer implements CommandLineRunner {
     
     @Override
     public void run(String... args) throws Exception {
-        // 기존 데이터가 있으면 초기화하지 않음
-        if (techPostRepository.count() > 0) {
-            return;
-        }
+        // 데이터 초기화 로직 비활성화
+        System.out.println("DataInitializer가 비활성화되었습니다. 기존 데이터베이스 데이터를 유지합니다.");
         
-        // 샘플 TechPost 데이터 생성
-        createSampleTechPosts();
+        // 기존 데이터 모두 삭제 - 주석 처리
+        // techPostRepository.deleteAll();
+        // System.out.println("기존 TechPost 데이터를 모두 삭제했습니다.");
+        
+        // 샘플 TechPost 데이터 생성 - 주석 처리
+        // createSampleTechPosts();
     }
     
     private void createSampleTechPosts() {
@@ -126,9 +129,9 @@ public class DataInitializer implements CommandLineRunner {
         };
         
         String[] urls = {
-            "https://tech.kakao.com/2023/03/15/react-18-features/",
+            "https://whatthaburger.tistory.com/",
             "https://d2.naver.com/helloworld/7804182",
-            "https://engineering.linecorp.com/ko/blog/ml-inference-system/",
+            "https://whatthaburger.tistory.com/",
             "https://techblog.woowahan.com/10969/",
             "https://toss.tech/article/vue3-composition-api",
             "https://medium.com/coupang-engineering/kafka-best-practices",
