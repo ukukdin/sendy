@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: gatherPage
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  h2:
+    console:
+      enabled: true
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+    database: h2
+    show-sql: true
+  sql:
+    init:
+      mode: always
+
+server:
+  port: 8080
+
+# CORS 설정
+cors:
+  allowed-origins: http://localhost:3000,http://localhost:5173,http://localhost:5174
+  allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+  allowed-headers: "*" 

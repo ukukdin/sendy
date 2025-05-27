@@ -5,7 +5,8 @@
         <!-- 로고 -->
         <div class="logo">
           <router-link to="/" class="logo-link">
-            <h1>SONGPA GETHER</h1>
+            <div class="logo-s">S</div>
+            <span class="logo-text">SONGPA GETHER</span>
           </router-link>
         </div>
 
@@ -33,18 +34,12 @@
           
           <!-- 로그인 상태에 따른 버튼 -->
           <div v-if="!isLoggedIn" class="auth-buttons">
-            <button @click="showLoginModal" class="login-btn">로그인</button>
+            <button @click="showLoginModal = true" class="login-btn">로그인</button>
           </div>
           
           <div v-else class="user-menu">
             <div class="user-info" @click="toggleUserMenu">
-              <img 
-                v-if="currentUser.profileImage" 
-                :src="currentUser.profileImage" 
-                :alt="currentUser.name"
-                class="user-avatar"
-              />
-              <div v-else class="user-avatar-default">
+              <div class="user-avatar-default">
                 {{ currentUser.name.charAt(0) }}
               </div>
               <span class="user-name">{{ currentUser.name }}</span>
@@ -66,56 +61,124 @@
         </div>
       </div>
     </div>
+    
+    <!-- 로그인 모달 -->
+    <div v-if="showLoginModal" class="login-modal-overlay" @click="closeModal">
+      <div class="login-modal-content" @click.stop>
+        <div class="login-modal-header">
+          <h2>로그인</h2>
+          <button @click="showLoginModal = false" class="modal-close">×</button>
+        </div>
+        
+        <div class="login-modal-body">
+          <div class="login-intro">
+            <p>소셜 계정으로 간편하게 로그인하세요</p>
+          </div>
+          
+          <div class="login-buttons">
+            <button @click="loginWithKakao" class="login-btn kakao-btn">
+              <div class="btn-icon">
+                <img src="/kakao-icon.png" alt="카카오" />
+              </div>
+              카카오로 로그인
+            </button>
+            
+            <button @click="loginWithGoogle" class="login-btn google-btn">
+              <div class="btn-icon">
+                <img src="/google-icon.png" alt="구글" />
+              </div>
+              구글로 로그인
+            </button>
+          </div>
+          
+          <div class="signup-section">
+            <p>계정이 없으신가요? <button @click="showSignupModal = true; showLoginModal = false" class="signup-link">회원가입</button></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 회원가입 모달 -->
+    <div v-if="showSignupModal" class="login-modal-overlay" @click="closeModal">
+      <div class="login-modal-content" @click.stop>
+        <div class="login-modal-header">
+          <h2>회원가입</h2>
+          <button @click="showSignupModal = false" class="modal-close">×</button>
+        </div>
+        
+        <div class="login-modal-body">
+          <div class="login-intro">
+            <p>소셜 계정으로 간편하게 가입하세요</p>
+          </div>
+          
+          <div class="login-buttons">
+            <button @click="signupWithKakao" class="login-btn kakao-btn">
+              <div class="btn-icon">
+                <img src="/kakao-icon.png" alt="카카오" />
+              </div>
+              카카오로 회원가입
+            </button>
+            
+            <button @click="signupWithGoogle" class="login-btn google-btn">
+              <div class="btn-icon">
+                <img src="/google-icon.png" alt="구글" />
+              </div>
+              구글로 회원가입
+            </button>
+          </div>
+          
+          <div class="signup-section">
+            <p>이미 계정이 있으신가요? <button @click="showLoginModal = true; showSignupModal = false" class="signup-link">로그인</button></p>
+          </div>
+        </div>
+      </div>
+    </div>
   </header>
 </template>
 
 <script>
-import { authService } from '@/services/authService'
-
 export default {
   name: 'Header',
   data() {
     return {
-      isLoggedIn: false,
-      currentUser: null,
-      showUserDropdown: false
+      showLoginModal: false,
+      showSignupModal: false
     }
   },
-  mounted() {
-    this.checkLoginStatus()
-    // 로그인 상태 변경 감지
-    window.addEventListener('storage', this.handleStorageChange)
-  },
-  beforeUnmount() {
-    window.removeEventListener('storage', this.handleStorageChange)
-  },
   methods: {
-    checkLoginStatus() {
-      this.isLoggedIn = authService.isLoggedIn()
-      this.currentUser = authService.getCurrentUser()
-    },
-    
-    handleStorageChange() {
-      this.checkLoginStatus()
-    },
-    
-    showLoginModal() {
-      this.$emit('show-login')
-    },
-    
-    toggleUserMenu() {
-      this.showUserDropdown = !this.showUserDropdown
-    },
-    
-    async logout() {
-      try {
-        await authService.logoutAll()
-        this.checkLoginStatus()
-        this.showUserDropdown = false
-        this.$emit('logout')
-      } catch (error) {
-        console.error('로그아웃 실패:', error)
+    closeModal(event) {
+      if (event.target === event.currentTarget) {
+        this.showLoginModal = false
+        this.showSignupModal = false
       }
+    },
+    
+    loginWithKakao() {
+      // 카카오 로그인 목업
+      alert('카카오 로그인이 실행됩니다!')
+      this.showLoginModal = false
+      // 실제 구현 시: 카카오 SDK 호출
+    },
+    
+    loginWithGoogle() {
+      // 구글 로그인 목업
+      alert('구글 로그인이 실행됩니다!')
+      this.showLoginModal = false
+      // 실제 구현 시: 구글 SDK 호출
+    },
+    
+    signupWithKakao() {
+      // 카카오 회원가입 목업
+      alert('카카오로 회원가입이 실행됩니다!')
+      this.showSignupModal = false
+      // 실제 구현 시: 카카오 SDK 호출 후 회원가입 처리
+    },
+    
+    signupWithGoogle() {
+      // 구글 회원가입 목업
+      alert('구글로 회원가입이 실행됩니다!')
+      this.showSignupModal = false
+      // 실제 구현 시: 구글 SDK 호출 후 회원가입 처리
     }
   }
 }

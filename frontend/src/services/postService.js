@@ -1,246 +1,325 @@
 import axios from 'axios'
 
-// 기술 블로그 샘플 데이터
-const techBlogPosts = [
+// 백엔드 API 기본 URL
+const API_BASE_URL = 'http://localhost:8080/api/tech-posts'
+
+// Axios 인스턴스 생성
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+  }
+})
+
+// 하드코딩된 샘플 데이터
+const samplePosts = [
   {
     id: 1,
-    title: "Simplicity 4 : 뒤에 개발자 있어요",
-    content: "안녕하세요, Simplicity 4 프로젝트에서 프론트엔드 개발을 맡은 Frontend UX Engineer 박은식, 이예서입니다. 이번 프로젝트를 진행할 때 기술적으로 고민했던 내용들을 공유하고자 해요. 이번 Simplicity 프로젝트는 다음 시즌에도 재사용 가능하도록 구조화하는데 초점을 맞췄어요.",
-    author: "박은식, 이예서",
-    createdAt: "2025-05-27T14:30:00.000Z",
-    published: true,
+    title: "React 18의 새로운 기능과 성능 최적화",
+    content: "React 18에서 도입된 Concurrent Features와 Automatic Batching에 대해 알아보고, 실제 프로젝트에서 어떻게 활용할 수 있는지 살펴봅니다. Suspense와 함께 사용하는 방법과 성능 향상 팁을 제공합니다.",
+    company: "카카오",
     category: "Frontend",
-    company: "Codenary",
-    tags: ["React", "Frontend", "UX", "컴포넌트"],
-    readTime: "8분"
+    tags: ["React", "JavaScript", "Performance", "Web Development"],
+    readTime: "8분",
+    author: "카카오",
+    createdAt: "2025-05-27T10:00:00",
+    url: "https://tech.kakao.com/2023/03/15/react-18-features/"
   },
   {
     id: 2,
-    title: "RAG 기법을 활용한 AWX 지원 봇 개발기",
-    content: "LY는 여러 나라의 임직원이 함께 서비스를 개발하고 있기 때문에 문의 또한 여러 언어로 접수됩니다. 이를 고려해 SBERT에서 제공하는 성능 평가 표를 참조해서 다국어를 지원하는 모델 중 문장 비교 성능이 가장 괜찮은 paraphrase-multilingual-mpnet-base-v2를 선택했습니다.",
-    author: "LY 개발팀",
-    createdAt: "2025-05-23T09:15:00.000Z",
-    published: true,
-    category: "AI/ML",
-    company: "LY Corporation",
-    tags: ["RAG", "LangChain", "OpenAI", "ChatBot"],
-    readTime: "12분"
+    title: "Kubernetes 환경에서의 마이크로서비스 배포 전략",
+    content: "대규모 마이크로서비스 아키텍처를 Kubernetes 환경에 배포할 때 고려해야 할 사항들을 다룹니다. Service Mesh, Ingress Controller, 그리고 모니터링 전략에 대해 설명합니다.",
+    company: "네이버",
+    category: "DevOps",
+    tags: ["Kubernetes", "Microservices", "Docker", "DevOps"],
+    readTime: "12분",
+    author: "네이버",
+    createdAt: "2025-05-26T14:30:00",
+    url: "https://d2.naver.com/helloworld/7804182"
   },
   {
     id: 3,
-    title: "모바일 웹 성능 최적화 실전 가이드",
-    content: "모바일 환경에서의 웹 성능 최적화는 사용자 경험에 직접적인 영향을 미칩니다. 이번 글에서는 실제 프로젝트에서 적용한 성능 최적화 기법들을 소개합니다. 이미지 최적화, 코드 스플리팅, 캐싱 전략 등 다양한 방법을 다룹니다.",
-    author: "김개발",
-    createdAt: "2025-05-20T16:45:00.000Z",
-    published: true,
-    category: "Performance",
-    company: "Tech Company",
-    tags: ["모바일", "성능최적화", "웹팩", "이미지"],
-    readTime: "10분"
+    title: "머신러닝 모델의 실시간 추론 시스템 구축",
+    content: "TensorFlow Serving과 Kubernetes를 활용하여 머신러닝 모델의 실시간 추론 시스템을 구축하는 방법을 소개합니다. 모델 버전 관리와 A/B 테스트 전략도 함께 다룹니다.",
+    company: "라인",
+    category: "AI/ML",
+    tags: ["Machine Learning", "TensorFlow", "Kubernetes", "MLOps"],
+    readTime: "15분",
+    author: "라인",
+    createdAt: "2025-05-25T09:15:00",
+    url: "https://engineering.linecorp.com/ko/blog/ml-inference-system/"
   },
   {
     id: 4,
-    title: "Vue 3 Composition API 마스터하기",
-    content: "Vue 3의 Composition API는 기존 Options API와는 다른 접근 방식을 제공합니다. 이 글에서는 Composition API의 핵심 개념부터 실제 프로젝트 적용 사례까지 상세히 다룹니다. ref, reactive, computed, watch 등의 핵심 기능들을 예제와 함께 설명합니다.",
-    author: "이프론트",
-    createdAt: "2025-05-18T11:20:00.000Z",
-    published: true,
-    category: "Vue.js",
-    company: "Frontend Studio",
-    tags: ["Vue3", "Composition API", "JavaScript", "프론트엔드"],
-    readTime: "15분"
+    title: "Spring Boot 3.0과 GraalVM Native Image",
+    content: "Spring Boot 3.0에서 지원하는 GraalVM Native Image를 활용하여 애플리케이션 시작 시간을 단축하고 메모리 사용량을 최적화하는 방법을 알아봅니다.",
+    company: "우아한형제들",
+    category: "Backend",
+    tags: ["Spring Boot", "GraalVM", "Java", "Performance"],
+    readTime: "10분",
+    author: "우아한형제들",
+    createdAt: "2025-05-24T16:45:00",
+    url: "https://techblog.woowahan.com/10969/"
   },
   {
     id: 5,
-    title: "마이크로서비스 아키텍처 설계 패턴",
-    content: "대규모 서비스에서 마이크로서비스 아키텍처를 도입할 때 고려해야 할 설계 패턴들을 정리했습니다. API Gateway, Service Discovery, Circuit Breaker 등의 패턴과 실제 구현 방법을 다룹니다.",
-    author: "박백엔드",
-    createdAt: "2025-05-15T13:10:00.000Z",
-    published: true,
-    category: "Architecture",
-    company: "Scale Corp",
-    tags: ["마이크로서비스", "아키텍처", "Spring Boot", "Docker"],
-    readTime: "20분"
+    title: "Vue.js 3 Composition API 완벽 가이드",
+    content: "Vue.js 3의 Composition API를 활용하여 더 재사용 가능하고 유지보수하기 쉬운 컴포넌트를 작성하는 방법을 설명합니다. TypeScript와의 통합 방법도 함께 다룹니다.",
+    company: "토스",
+    category: "Frontend",
+    tags: ["Vue.js", "TypeScript", "Composition API", "Frontend"],
+    readTime: "9분",
+    author: "토스",
+    createdAt: "2025-05-23T11:20:00",
+    url: "https://toss.tech/article/vue3-composition-api"
   },
   {
     id: 6,
-    title: "TypeScript 고급 타입 시스템 활용법",
-    content: "TypeScript의 고급 타입 시스템을 활용하여 더 안전하고 표현력 있는 코드를 작성하는 방법을 알아봅니다. Generic, Conditional Types, Mapped Types 등을 실제 예제와 함께 설명합니다.",
-    author: "최타입",
-    createdAt: "2025-05-12T10:30:00.000Z",
-    published: true,
-    category: "TypeScript",
-    company: "Type Safe Inc",
-    tags: ["TypeScript", "타입시스템", "Generic", "고급기법"],
-    readTime: "18분"
+    title: "대용량 데이터 처리를 위한 Apache Kafka 활용법",
+    content: "실시간 데이터 스트리밍 처리를 위한 Apache Kafka의 핵심 개념과 실제 운영 환경에서의 최적화 방법을 소개합니다. 파티셔닝 전략과 컨슈머 그룹 관리에 대해 다룹니다.",
+    company: "쿠팡",
+    category: "Backend",
+    tags: ["Kafka", "Data Streaming", "Big Data", "Distributed Systems"],
+    readTime: "14분",
+    author: "쿠팡",
+    createdAt: "2025-05-22T13:10:00",
+    url: "https://medium.com/coupang-engineering/kafka-best-practices"
   },
   {
     id: 7,
-    title: "React 18의 새로운 기능들",
-    content: "React 18에서 도입된 Concurrent Features, Automatic Batching, Suspense 개선사항 등을 실제 예제와 함께 살펴봅니다. 성능 향상과 사용자 경험 개선에 대해 다룹니다.",
-    author: "리액트맨",
-    createdAt: "2025-05-10T15:45:00.000Z",
-    published: true,
-    category: "Frontend",
-    company: "React Corp",
-    tags: ["React18", "Concurrent", "Suspense", "성능"],
-    readTime: "14분"
+    title: "모바일 앱 성능 모니터링과 최적화",
+    content: "React Native와 Flutter 앱의 성능을 모니터링하고 최적화하는 방법을 비교 분석합니다. 메모리 누수 방지와 렌더링 성능 향상 기법을 제공합니다.",
+    company: "당근마켓",
+    category: "Mobile",
+    tags: ["React Native", "Flutter", "Performance", "Mobile Development"],
+    readTime: "11분",
+    author: "당근마켓",
+    createdAt: "2025-05-21T15:30:00",
+    url: "https://medium.com/daangn/mobile-performance-monitoring"
   },
   {
     id: 8,
-    title: "Docker와 Kubernetes 실전 가이드",
-    content: "컨테이너 기반 개발 환경 구축부터 Kubernetes 클러스터 운영까지, 실무에서 바로 적용할 수 있는 DevOps 기술을 정리했습니다.",
-    author: "데브옵스킹",
-    createdAt: "2025-05-08T08:20:00.000Z",
-    published: true,
-    category: "DevOps",
-    company: "Cloud Native Inc",
-    tags: ["Docker", "Kubernetes", "DevOps", "컨테이너"],
-    readTime: "25분"
+    title: "GraphQL과 REST API 비교 분석",
+    content: "GraphQL과 REST API의 장단점을 실제 프로젝트 경험을 바탕으로 비교 분석합니다. 언제 어떤 기술을 선택해야 하는지에 대한 가이드라인을 제시합니다.",
+    company: "배달의민족",
+    category: "Backend",
+    tags: ["GraphQL", "REST API", "API Design", "Web Development"],
+    readTime: "7분",
+    author: "배달의민족",
+    createdAt: "2025-05-20T10:45:00",
+    url: "https://techblog.yogiyo.co.kr/graphql-vs-rest-api"
   },
   {
     id: 9,
-    title: "GraphQL vs REST API 비교 분석",
-    content: "GraphQL과 REST API의 장단점을 실제 프로젝트 경험을 바탕으로 비교 분석합니다. 언제 어떤 기술을 선택해야 하는지에 대한 가이드를 제공합니다.",
-    author: "API마스터",
-    createdAt: "2025-05-05T12:00:00.000Z",
-    published: true,
-    category: "Backend",
-    company: "API Solutions",
-    tags: ["GraphQL", "REST", "API", "백엔드"],
-    readTime: "16분"
+    title: "AWS Lambda를 활용한 서버리스 아키텍처",
+    content: "AWS Lambda와 API Gateway를 활용하여 서버리스 아키텍처를 구축하는 방법을 설명합니다. 비용 최적화와 콜드 스타트 문제 해결 방안도 함께 다룹니다.",
+    company: "야놀자",
+    category: "Cloud",
+    tags: ["AWS Lambda", "Serverless", "Cloud Computing", "API Gateway"],
+    readTime: "13분",
+    author: "야놀자",
+    createdAt: "2025-05-19T14:20:00",
+    url: "https://yanolja.github.io/2023/03/15/serverless-architecture/"
   },
   {
     id: 10,
-    title: "웹 접근성 개선을 위한 실무 가이드",
-    content: "WCAG 2.1 가이드라인을 기반으로 한 웹 접근성 개선 방법을 소개합니다. 스크린 리더 지원, 키보드 네비게이션, 색상 대비 등을 다룹니다.",
-    author: "접근성전문가",
-    createdAt: "2025-05-03T14:25:00.000Z",
-    published: true,
+    title: "TypeScript 고급 타입 시스템 활용법",
+    content: "TypeScript의 고급 타입 기능을 활용하여 더 안전하고 표현력 있는 코드를 작성하는 방법을 소개합니다. Conditional Types, Mapped Types, Template Literal Types 등을 다룹니다.",
+    company: "NHN",
     category: "Frontend",
-    company: "Accessibility First",
-    tags: ["접근성", "WCAG", "웹표준", "사용성"],
-    readTime: "12분"
+    tags: ["TypeScript", "Type System", "JavaScript", "Web Development"],
+    readTime: "6분",
+    author: "NHN",
+    createdAt: "2025-05-18T09:30:00",
+    url: "https://meetup.nhncloud.com/posts/295"
   },
   {
     id: 11,
-    title: "Node.js 성능 최적화 기법",
-    content: "Node.js 애플리케이션의 성능을 향상시키는 다양한 기법들을 소개합니다. 메모리 관리, 이벤트 루프 최적화, 클러스터링 등을 다룹니다.",
-    author: "노드개발자",
-    createdAt: "2025-05-01T09:30:00.000Z",
-    published: true,
+    title: "Redis를 활용한 캐싱 전략과 성능 최적화",
+    content: "Redis를 활용한 다양한 캐싱 패턴과 실제 운영 환경에서의 성능 최적화 방법을 소개합니다. 메모리 관리와 클러스터 구성에 대해서도 다룹니다.",
+    company: "SK플래닛",
     category: "Backend",
-    company: "Node Masters",
-    tags: ["Node.js", "성능최적화", "메모리", "이벤트루프"],
-    readTime: "20분"
+    tags: ["Redis", "Caching", "Performance", "Database"],
+    readTime: "9분",
+    author: "SK플래닛",
+    createdAt: "2025-05-17T12:15:00",
+    url: "https://tech.socarcorp.kr/data/2023/03/15/redis-caching-strategy/"
   },
   {
     id: 12,
-    title: "CSS Grid와 Flexbox 마스터하기",
-    content: "CSS Grid와 Flexbox의 차이점과 각각의 활용법을 실제 레이아웃 예제와 함께 설명합니다. 반응형 웹 디자인의 핵심 기술을 마스터해보세요.",
-    author: "CSS마법사",
-    createdAt: "2025-04-28T17:15:00.000Z",
-    published: true,
-    category: "Frontend",
-    company: "CSS Wizards",
-    tags: ["CSS", "Grid", "Flexbox", "레이아웃"],
-    readTime: "15분"
+    title: "CI/CD 파이프라인 구축과 자동화",
+    content: "Jenkins, GitLab CI, GitHub Actions를 활용한 CI/CD 파이프라인 구축 방법을 비교하고, 각각의 장단점과 적용 사례를 소개합니다.",
+    company: "LG CNS",
+    category: "DevOps",
+    tags: ["CI/CD", "Jenkins", "GitLab CI", "GitHub Actions", "Automation"],
+    readTime: "10분",
+    author: "LG CNS",
+    createdAt: "2025-05-16T16:00:00",
+    url: "https://www.lgcns.com/blog/cns-tech/cicd-pipeline-automation/"
   }
 ]
 
 export const postService = {
-  // 모든 포스트 가져오기
+  // 모든 포스트 가져오기 (하드코딩된 데이터 사용)
   async getAllPosts() {
-    // 현재는 기술 블로그 데이터만 사용 (빠른 로딩을 위해)
-    // 백엔드가 필요할 때 아래 주석을 해제하세요
-    /*
     try {
-      // 백엔드 데이터 시도 (2초 타임아웃)
-      const response = await axios.get('http://localhost:8080/api/posts', {
-        timeout: 2000
+      // 실제 API 호출 대신 하드코딩된 데이터 반환
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(samplePosts)
+        }, 500) // 로딩 시뮬레이션
       })
-      const backendPosts = response.data || []
-      
-      // 기술 블로그 데이터와 백엔드 데이터 합치기
-      const allPosts = [...techBlogPosts, ...backendPosts]
-      
-      // 최신순으로 정렬
-      return allPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     } catch (error) {
-      console.log('백엔드 연결 실패, 기술 블로그 데이터만 반환:', error)
-      // 백엔드 실패 시 기술 블로그 데이터만 반환
-      return techBlogPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      console.error('포스트 조회 실패:', error)
+      throw error
     }
-    */
-    
-    // 로컬 스토리지의 커스텀 포스트와 기술 블로그 데이터 합치기
-    const customPosts = this.loadCustomPosts()
-    const allPosts = [...customPosts, ...techBlogPosts]
-    
-    // 중복 제거 (ID 기준)
-    const uniquePosts = allPosts.filter((post, index, self) => 
-      index === self.findIndex(p => p.id === post.id)
-    )
-    
-    return uniquePosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  },
+
+  // 페이지네이션으로 포스트 가져오기
+  async getPostsWithPagination(page = 0, size = 10) {
+    try {
+      // 하드코딩된 데이터에서 페이지네이션 처리
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          const sortedPosts = [...samplePosts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          const start = page * size
+          const end = start + size
+          const content = sortedPosts.slice(start, end)
+          
+          resolve({
+            content: content,
+            totalElements: samplePosts.length,
+            totalPages: Math.ceil(samplePosts.length / size),
+            number: page,
+            size: size
+          })
+        }, 300)
+      })
+    } catch (error) {
+      console.error('페이지네이션 포스트 조회 실패:', error)
+      throw error
+    }
+  },
+
+  // 특정 포스트 가져오기
+  async getPostById(id) {
+    try {
+      // 하드코딩된 데이터에서 ID로 찾기
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          const post = samplePosts.find(p => p.id === parseInt(id))
+          if (post) {
+            resolve(post)
+          } else {
+            reject(new Error('포스트를 찾을 수 없습니다'))
+          }
+        }, 200)
+      })
+    } catch (error) {
+      console.error('포스트 상세 조회 실패:', error)
+      throw error
+    }
   },
 
   // 최신 포스트 가져오기 (개수 제한)
+  async getLatestPosts() {
+    try {
+      // 하드코딩된 데이터에서 최신 3개 반환
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          const sortedPosts = [...samplePosts].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          resolve(sortedPosts.slice(0, 3))
+        }, 300)
+      })
+    } catch (error) {
+      console.error('최신 포스트 조회 실패:', error)
+      throw error
+    }
+  },
+
+  // 최신 포스트 가져오기 (기존 메서드명 호환성)
   async getRecentPosts(limit = 3) {
-    const allPosts = await this.getAllPosts()
-    return allPosts.slice(0, limit)
+    return this.getLatestPosts()
   },
 
   // 카테고리별 포스트 가져오기
   async getPostsByCategory(category) {
-    const allPosts = await this.getAllPosts()
-    return allPosts.filter(post => post.category === category)
+    try {
+      // 하드코딩된 데이터에서 카테고리별 필터링
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          const filteredPosts = samplePosts.filter(post => 
+            post.category === category
+          ).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          resolve(filteredPosts)
+        }, 300)
+      })
+    } catch (error) {
+      console.error('카테고리별 포스트 조회 실패:', error)
+      throw error
+    }
+  },
+
+  // 회사별 포스트 가져오기
+  async getPostsByCompany(company) {
+    try {
+      // 하드코딩된 데이터에서 회사별 필터링
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          const filteredPosts = samplePosts.filter(post => 
+            post.company === company
+          ).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          resolve(filteredPosts)
+        }, 300)
+      })
+    } catch (error) {
+      console.error('회사별 포스트 조회 실패:', error)
+      throw error
+    }
+  },
+
+  // 검색
+  async searchPosts(keyword) {
+    try {
+      // 하드코딩된 데이터에서 키워드 검색
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          const query = keyword.toLowerCase()
+          const filteredPosts = samplePosts.filter(post =>
+            post.title.toLowerCase().includes(query) ||
+            post.content.toLowerCase().includes(query) ||
+            post.company.toLowerCase().includes(query) ||
+            post.category.toLowerCase().includes(query) ||
+            (post.tags && post.tags.some(tag => tag.toLowerCase().includes(query)))
+          ).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          resolve(filteredPosts)
+        }, 300)
+      })
+    } catch (error) {
+      console.error('포스트 검색 실패:', error)
+      throw error
+    }
   },
 
   // 포스트 생성
   async createPost(postData) {
     try {
-      // 로컬 스토리지에 저장
-      const existingPosts = JSON.parse(localStorage.getItem('customPosts') || '[]')
-              const newPost = {
-          ...postData,
-          id: Date.now(),
-          createdAt: new Date().toISOString()
-        }
-      existingPosts.push(newPost)
-      localStorage.setItem('customPosts', JSON.stringify(existingPosts))
-      
-      // 기술 블로그 데이터에도 추가 (메모리에서만)
-      techBlogPosts.unshift(newPost)
-      
-      return newPost
+      const response = await api.post('/', postData)
+      return response.data
     } catch (error) {
       console.error('포스트 생성 실패:', error)
       throw error
     }
   },
 
-  // 포스트 수정
+  // 포스트 업데이트
   async updatePost(postData) {
     try {
-      // 로컬 스토리지에서 수정
-      const existingPosts = JSON.parse(localStorage.getItem('customPosts') || '[]')
-      const index = existingPosts.findIndex(post => post.id === postData.id)
-      
-      if (index !== -1) {
-        existingPosts[index] = { ...postData }
-        localStorage.setItem('customPosts', JSON.stringify(existingPosts))
-      }
-      
-      // 기술 블로그 데이터에서도 수정
-      const techIndex = techBlogPosts.findIndex(post => post.id === postData.id)
-      if (techIndex !== -1) {
-        techBlogPosts[techIndex] = { ...postData }
-      }
-      
-      return postData
+      const response = await api.put(`/${postData.id}`, postData)
+      return response.data
     } catch (error) {
-      console.error('포스트 수정 실패:', error)
+      console.error('포스트 업데이트 실패:', error)
       throw error
     }
   },
@@ -248,17 +327,7 @@ export const postService = {
   // 포스트 삭제
   async deletePost(id) {
     try {
-      // 로컬 스토리지에서 삭제
-      const existingPosts = JSON.parse(localStorage.getItem('customPosts') || '[]')
-      const filteredPosts = existingPosts.filter(post => post.id !== id)
-      localStorage.setItem('customPosts', JSON.stringify(filteredPosts))
-      
-      // 기술 블로그 데이터에서도 삭제
-      const techIndex = techBlogPosts.findIndex(post => post.id === id)
-      if (techIndex !== -1) {
-        techBlogPosts.splice(techIndex, 1)
-      }
-      
+      await api.delete(`/${id}`)
       return true
     } catch (error) {
       console.error('포스트 삭제 실패:', error)
@@ -266,14 +335,35 @@ export const postService = {
     }
   },
 
-  // 로컬 스토리지에서 커스텀 포스트 로드
-  loadCustomPosts() {
+  // 카테고리 목록 조회
+  async getCategories() {
     try {
-      const customPosts = JSON.parse(localStorage.getItem('customPosts') || '[]')
-      return customPosts
+      // 하드코딩된 데이터에서 고유 카테고리 추출
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          const categories = [...new Set(samplePosts.map(post => post.category))]
+          resolve(categories)
+        }, 200)
+      })
     } catch (error) {
-      console.error('커스텀 포스트 로드 실패:', error)
-      return []
+      console.error('카테고리 조회 실패:', error)
+      throw error
+    }
+  },
+
+  // 회사 목록 조회
+  async getCompanies() {
+    try {
+      // 하드코딩된 데이터에서 고유 회사 추출
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          const companies = [...new Set(samplePosts.map(post => post.company))]
+          resolve(companies)
+        }, 200)
+      })
+    } catch (error) {
+      console.error('회사 목록 조회 실패:', error)
+      throw error
     }
   }
 } 
