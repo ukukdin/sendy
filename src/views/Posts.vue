@@ -4,8 +4,8 @@
     <section class="page-header">
       <div class="container">
         <div class="header-content">
-          <h1 class="page-title">모든 포스트</h1>
-          <p class="page-subtitle">개발자를 위한 다양한 기술 콘텐츠를 만나보세요</p>
+          <h1 class="page-title">금융 뉴스</h1>
+          <p class="page-subtitle">핀테크, 뱅킹, 투자 관련 최신 뉴스와 분석을 만나보세요</p>
         </div>
       </div>
     </section>
@@ -19,12 +19,20 @@
               v-model="searchQuery"
               @input="searchPosts"
               type="text"
-              placeholder="포스트 제목이나 내용으로 검색..."
+              placeholder="뉴스 제목이나 내용으로 검색..."
               class="search-input"
             />
             <button class="search-button">🔍</button>
           </div>
           <div class="filter-options">
+            <select v-model="selectedCategory" @change="filterByCategory" class="category-select">
+              <option value="">전체 카테고리</option>
+              <option value="핀테크">핀테크</option>
+              <option value="뱅킹">뱅킹</option>
+              <option value="투자">투자</option>
+              <option value="암호화폐">암호화폐</option>
+              <option value="정책">정책</option>
+            </select>
             <select v-model="sortBy" @change="sortPosts" class="sort-select">
               <option value="latest">최신순</option>
               <option value="oldest">오래된순</option>
@@ -35,12 +43,12 @@
       </div>
     </section>
 
-    <!-- 포스트 목록 -->
+    <!-- 뉴스 목록 -->
     <section class="posts-section">
       <div class="container">
         <div v-if="loading" class="loading">
           <div class="spinner"></div>
-          <p>포스트를 불러오는 중...</p>
+          <p>뉴스를 불러오는 중...</p>
         </div>
         
         <div v-else-if="error" class="error">
@@ -52,10 +60,10 @@
         
         <div v-else>
           <div v-if="filteredPosts.length === 0" class="no-results">
-            <div class="no-results-icon">📝</div>
-            <h3>포스트가 없습니다</h3>
-            <p v-if="searchQuery">검색 조건에 맞는 포스트를 찾을 수 없습니다.</p>
-            <p v-else>아직 작성된 포스트가 없습니다.</p>
+            <div class="no-results-icon">📰</div>
+            <h3>뉴스가 없습니다</h3>
+            <p v-if="searchQuery">검색 조건에 맞는 뉴스를 찾을 수 없습니다.</p>
+            <p v-else>아직 등록된 뉴스가 없습니다.</p>
           </div>
           
           <div v-else class="posts-grid">
@@ -67,10 +75,10 @@
             >
               <div class="post-header">
                 <div class="post-category" :class="getCategoryClass(post.category)">
-                  {{ post.category || 'Tech' }}
+                  {{ post.category || '금융' }}
                 </div>
-                <div class="post-company" v-if="post.company">
-                  {{ post.company }}
+                <div class="post-source" v-if="post.source">
+                  {{ post.source }}
                 </div>
               </div>
               
@@ -156,7 +164,7 @@
           
           <!-- 페이지 정보 -->
           <div v-if="filteredPosts.length > 0" class="page-info">
-            총 {{ filteredPosts.length }}개의 포스트 중 {{ (currentPage - 1) * postsPerPage + 1 }}-{{ Math.min(currentPage * postsPerPage, filteredPosts.length) }}개 표시
+            총 {{ filteredPosts.length }}개의 뉴스 중 {{ (currentPage - 1) * postsPerPage + 1 }}-{{ Math.min(currentPage * postsPerPage, filteredPosts.length) }}개 표시
           </div>
         </div>
       </div>
@@ -165,8 +173,6 @@
 </template>
 
 <script>
-import { postService } from '@/services/postService'
-
 export default {
   name: 'Posts',
   data() {
@@ -176,6 +182,7 @@ export default {
       loading: true,
       error: null,
       searchQuery: '',
+      selectedCategory: '',
       sortBy: 'latest',
       currentPage: 1,
       postsPerPage: 10
@@ -206,27 +213,96 @@ export default {
       return pages
     }
   },
-  async mounted() {
-    // 즉시 로딩 시작
-    this.fetchPosts()
+  mounted() {
+    this.loadSampleNews()
   },
   methods: {
-    async fetchPosts() {
-      try {
-        this.loading = true
-        this.error = null
+    loadSampleNews() {
+      this.loading = true
+      
+      // 샘플 금융 뉴스 데이터
+      setTimeout(() => {
+        this.posts = [
+          {
+            id: 1,
+            title: '핀테크 스타트업 투자 열풍, 올해 상반기 투자액 2조원 돌파',
+            content: '국내 핀테크 스타트업에 대한 투자가 활발해지고 있다. 한국벤처투자협회에 따르면 올해 상반기 핀테크 분야 투자액이 2조원을 돌파했다. 특히 송금, 결제, 대출 분야에서 혁신적인 서비스를 제공하는 스타트업들이 주목받고 있다.',
+            category: '핀테크',
+            source: '한국경제',
+            author: '김재영',
+            createdAt: '2024-01-15T10:30:00',
+            readTime: '3분',
+            tags: ['핀테크', '투자', '스타트업'],
+            url: 'https://example.com/news1'
+          },
+          {
+            id: 2,
+            title: '디지털 뱅킹 이용률 80% 돌파, MZ세대 중심으로 확산',
+            content: '금융감독원이 발표한 자료에 따르면 디지털 뱅킹 이용률이 80%를 돌파했다. 특히 20-30대 MZ세대를 중심으로 모바일 뱅킹 이용이 급증하고 있으며, 은행권도 디지털 전환을 가속화하고 있다.',
+            category: '뱅킹',
+            source: '매일경제',
+            author: '이미영',
+            createdAt: '2024-01-14T14:20:00',
+            readTime: '2분',
+            tags: ['디지털뱅킹', 'MZ세대', '모바일뱅킹'],
+            url: 'https://example.com/news2'
+          },
+          {
+            id: 3,
+            title: '암호화폐 시장 회복세, 비트코인 5만 달러 돌파',
+            content: '암호화폐 시장이 회복세를 보이고 있다. 비트코인이 5만 달러를 돌파했으며, 이더리움도 상승세를 이어가고 있다. 전문가들은 기관투자자들의 유입과 규제 완화 기대감이 시장을 밀어올리고 있다고 분석한다.',
+            category: '암호화폐',
+            source: '블록미디어',
+            author: '박성민',
+            createdAt: '2024-01-13T09:15:00',
+            readTime: '4분',
+            tags: ['암호화폐', '비트코인', '투자'],
+            url: 'https://example.com/news3'
+          },
+          {
+            id: 4,
+            title: '정부, 핀테크 규제 샌드박스 확대 추진',
+            content: '정부가 핀테크 규제 샌드박스를 확대 추진한다고 발표했다. 기존 3개 분야에서 7개 분야로 확대하며, 특히 AI 금융, 블록체인 기반 서비스에 대한 규제 완화를 검토하고 있다.',
+            category: '정책',
+            source: '연합뉴스',
+            author: '최동욱',
+            createdAt: '2024-01-12T16:45:00',
+            readTime: '3분',
+            tags: ['규제', '핀테크', '정책'],
+            url: 'https://example.com/news4'
+          },
+          {
+            id: 5,
+            title: '투자자들, ESG 투자 확대... 친환경 금융 상품 인기',
+            content: 'ESG(환경, 사회, 지배구조) 투자가 확대되고 있다. 국내 주요 자산운용사들이 ESG 상품을 잇따라 출시하고 있으며, 특히 친환경 프로젝트에 대한 투자가 활발해지고 있다.',
+            category: '투자',
+            source: '한국투자신문',
+            author: '정수진',
+            createdAt: '2024-01-11T11:30:00',
+            readTime: '5분',
+            tags: ['ESG', '투자', '친환경'],
+            url: 'https://example.com/news5'
+          },
+          {
+            id: 6,
+            title: '원화 디지털화폐(CBDC) 시범사업 시작',
+            content: '한국은행이 원화 디지털화폐(CBDC) 시범사업을 시작한다고 발표했다. 올해 하반기부터 은행권과 함께 시범 운영을 시작하며, 2025년부터 본격적인 도입을 검토하고 있다.',
+            category: '뱅킹',
+            source: '한국은행',
+            author: '김태형',
+            createdAt: '2024-01-10T13:20:00',
+            readTime: '4분',
+            tags: ['CBDC', '디지털화폐', '한국은행'],
+            url: 'https://example.com/news6'
+          }
+        ]
         
-        // 공통 서비스에서 모든 포스트 가져오기
-        this.posts = await postService.getAllPosts()
         this.filteredPosts = [...this.posts]
         this.sortPosts()
-      } catch (error) {
-        console.error('포스트 로딩 실패:', error)
-        this.error = '포스트를 불러오는데 실패했습니다.'
-      } finally {
         this.loading = false
-      }
+      }, 1000)
     },
+    
     searchPosts() {
       if (!this.searchQuery.trim()) {
         this.filteredPosts = [...this.posts]
@@ -238,9 +314,22 @@ export default {
           post.author.toLowerCase().includes(query)
         )
       }
-      this.currentPage = 1 // 검색 시 첫 페이지로 이동
+      this.currentPage = 1
       this.sortPosts()
     },
+    
+    filterByCategory() {
+      if (!this.selectedCategory) {
+        this.filteredPosts = [...this.posts]
+      } else {
+        this.filteredPosts = this.posts.filter(post => 
+          post.category === this.selectedCategory
+        )
+      }
+      this.currentPage = 1
+      this.sortPosts()
+    },
+    
     sortPosts() {
       switch (this.sortBy) {
         case 'latest':
@@ -254,15 +343,15 @@ export default {
           break
       }
     },
+    
     goToPost(post) {
       if (post.url) {
-        // 외부 URL이 있으면 새 탭에서 열기
         window.open(post.url, '_blank')
       } else {
-        // 내부 포스트 상세 페이지로 이동
         this.$router.push(`/posts/${post.id}`)
       }
     },
+    
     formatDate(dateString) {
       const date = new Date(dateString)
       return date.toLocaleDateString('ko-KR', {
@@ -273,35 +362,33 @@ export default {
         minute: '2-digit'
       })
     },
+    
     getExcerpt(content) {
       return content.length > 150 ? content.substring(0, 150) + '...' : content
     },
+    
     getAuthorInitial(author) {
       if (!author) return 'A'
-      // 한국어 이름의 경우 첫 글자, 영어 이름의 경우 첫 글자들
       if (author.includes(',')) {
         return author.split(',')[0].charAt(0).toUpperCase()
       }
       return author.charAt(0).toUpperCase()
     },
+    
     getCategoryClass(category) {
       const categoryMap = {
-        'Frontend': 'category-frontend',
-        'AI/ML': 'category-ai',
-        'Performance': 'category-performance',
-        'Vue.js': 'category-vue',
-        'Architecture': 'category-architecture',
-        'TypeScript': 'category-typescript',
-        'DevOps': 'category-devops',
-        'Backend': 'category-backend',
-        'Tech': 'category-tech'
+        '핀테크': 'category-fintech',
+        '뱅킹': 'category-banking',
+        '투자': 'category-investment',
+        '암호화폐': 'category-crypto',
+        '정책': 'category-policy'
       }
       return categoryMap[category] || 'category-default'
     },
+    
     goToPage(page) {
       if (page >= 1 && page <= this.totalPages) {
         this.currentPage = page
-        // 페이지 변경 시 스크롤을 맨 위로
         window.scrollTo({ top: 0, behavior: 'smooth' })
       }
     }

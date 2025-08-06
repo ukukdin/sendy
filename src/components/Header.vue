@@ -5,7 +5,7 @@
         <!-- 로고 -->
         <div class="logo">
           <router-link to="/" class="logo-link">
-            <div class="logo-icon">🏦</div>
+            <img src="/sendy-real-icon.svg" alt="SENDY" class="logo-icon" />
             <span class="logo-text">SENDY</span>
           </router-link>
         </div>
@@ -21,6 +21,12 @@
             </li>
             <li class="nav-item" v-if="isLoggedIn">
               <router-link to="/transactions" class="nav-link">거래내역</router-link>
+            </li>
+            <li class="nav-item">
+              <router-link to="/posts" class="nav-link">금융뉴스</router-link>
+            </li>
+            <li class="nav-item">
+              <router-link to="/about" class="nav-link">소개</router-link>
             </li>
           </ul>
         </nav>
@@ -125,14 +131,18 @@ export default {
 }
 
 .logo-icon {
-  font-size: 24px;
+  width: 32px;
+  height: 32px;
   margin-right: 10px;
 }
 
 .logo-text {
   font-weight: bold;
   font-size: 18px;
-  color: #667eea;
+  background: linear-gradient(135deg, #60A5FA 0%, #06B6D4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .nav-list {
@@ -152,7 +162,10 @@ export default {
 
 .nav-link:hover,
 .nav-link.router-link-active {
-  color: #667eea;
+  background: linear-gradient(135deg, #60A5FA 0%, #06B6D4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .header-actions {
@@ -179,22 +192,23 @@ export default {
 }
 
 .login-btn {
-  color: #667eea;
-  border: 1px solid #667eea;
+  color: #60A5FA;
+  border: 1px solid #60A5FA;
 }
 
 .login-btn:hover {
-  background: #667eea;
+  background: linear-gradient(135deg, #60A5FA 0%, #06B6D4 100%);
   color: white;
 }
 
 .signup-btn {
-  background: #667eea;
+  background: linear-gradient(135deg, #60A5FA 0%, #06B6D4 100%);
   color: white;
+  min-width: 100px;
 }
 
 .signup-btn:hover {
-  background: #5a6fd8;
+  background: linear-gradient(135deg, #3B82F6 0%, #0891B2 100%);
 }
 
 .user-menu {

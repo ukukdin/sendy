@@ -375,9 +375,12 @@ html, body {
 
 /* 페이지 헤더 */
 .page-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #60A5FA 0%, #06B6D4 100%);
   color: white;
-  padding: 60px 0;
+  padding: 120px 0 80px 0;
+  min-height: 300px;
+  display: flex;
+  align-items: center;
 }
 
 .header-content {
@@ -429,7 +432,7 @@ html, body {
 
 .search-input:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #60A5FA;
 }
 
 .search-button {
@@ -460,19 +463,21 @@ html, body {
 
 .sort-select:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #60A5FA;
 }
 
 /* 포스트 섹션 */
 .posts-section {
-  padding: 60px 0;
-  min-height: 400px;
+  padding: 80px 0;
+  min-height: 600px;
 }
 
 .posts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-  gap: 30px;
+  grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+  gap: 40px;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 /* 상태 메시지 */
@@ -554,11 +559,14 @@ html, body {
 .post-card {
   background: white;
   border-radius: 12px;
-  padding: 1.5rem;
+  padding: 2rem;
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   transition: all 0.3s ease;
   border: 1px solid #e2e8f0;
   cursor: pointer;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
 }
 
 .post-card:hover {
@@ -574,11 +582,13 @@ html, body {
 }
 
 .post-category {
-  padding: 4px 12px;
-  border-radius: 20px;
+  padding: 6px 16px;
+  border-radius: 25px;
   font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
+  display: inline-block;
+  transition: all 0.3s ease;
 }
 
 .category-frontend {
@@ -631,6 +641,32 @@ html, body {
   color: #6a1b9a;
 }
 
+/* 금융 카테고리 스타일 */
+.category-fintech {
+  background: linear-gradient(135deg, #60A5FA 0%, #06B6D4 100%);
+  color: white;
+}
+
+.category-banking {
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  color: white;
+}
+
+.category-investment {
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  color: white;
+}
+
+.category-crypto {
+  background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+  color: white;
+}
+
+.category-policy {
+  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+  color: white;
+}
+
 .post-company {
   font-size: 12px;
   color: #666;
@@ -640,18 +676,23 @@ html, body {
 }
 
 .post-title {
-  font-size: 1.4rem;
-  font-weight: 600;
+  font-size: 1.6rem;
+  font-weight: 700;
   color: #2d3748;
-  margin-bottom: 0.8rem;
-  line-height: 1.4;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
 }
 
 .post-excerpt {
   color: #4a5568;
-  line-height: 1.6;
-  margin-bottom: 1rem;
-  font-size: 0.95rem;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+  flex-grow: 1;
+  min-height: 120px;
 }
 
 .post-tags {
@@ -805,7 +846,7 @@ html, body {
 
 /* ===== ABOUT PAGE STYLES ===== */
 .about-hero {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #60A5FA 0%, #06B6D4 100%);
   color: white;
   padding: 80px 0;
   text-align: center;
@@ -1362,11 +1403,13 @@ html, body {
 }
 
 .category-badge {
-  padding: 4px 12px;
-  border-radius: 20px;
+  padding: 6px 16px;
+  border-radius: 25px;
   font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
+  display: inline-block;
+  transition: all 0.3s ease;
 }
 
 .actions {

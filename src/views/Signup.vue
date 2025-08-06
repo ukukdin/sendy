@@ -177,7 +177,7 @@ export default {
 }
 
 .signup-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #60A5FA 0%, #06B6D4 100%);
   color: white;
   border: none;
   padding: 16px 24px;
@@ -189,6 +189,7 @@ export default {
   margin-top: 10px;
   width: 100%;
   min-height: 48px;
+  min-width: 100px;
 }
 
 .signup-btn:hover:not(:disabled) {

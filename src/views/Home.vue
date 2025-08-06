@@ -21,20 +21,193 @@
       <section class="features-section">
         <h2>SENDY의 주요 기능</h2>
         <div class="features-grid">
-          <div class="feature-item">
+          <div class="feature-item" @click="handleFeatureClick('transfer')">
             <div class="feature-icon">💸</div>
             <h3>빠른 송금</h3>
             <p>안전하고 빠른 송금 서비스</p>
           </div>
-          <div class="feature-item">
-            <div class="feature-icon">📊</div>
-            <h3>거래내역</h3>
-            <p>상세한 거래 내역 확인</p>
-          </div>
-          <div class="feature-item">
+          <div class="feature-item" @click="handleFeatureClick('security')">
             <div class="feature-icon">🔒</div>
             <h3>보안</h3>
             <p>최고 수준의 보안 시스템</p>
+          </div>
+        </div>
+      </section>
+      
+      <!-- 뉴스 섹션 -->
+      <section class="news-section">
+        <h2>차근차근 나아가는 SENDY 소식</h2>
+        <div class="news-grid">
+          <div class="news-card">
+            <div class="news-label">사업소식</div>
+            <h3>국내 최초 핀테크 송금 서비스, SENDY 베타 서비스 시작</h3>
+            <div class="news-hashtags">
+              <span>#SENDY</span>
+              <span>#핀테크</span>
+              <span>#송금서비스</span>
+            </div>
+            <div class="news-graphic">
+              <div class="graphic-content">
+                <div class="graphic-icon">🚀</div>
+                <div class="graphic-text">SENDY 베타</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="news-card">
+            <div class="news-label">사업소식</div>
+            <h3>안전한 디지털 뱅킹의 새로운 기준, SENDY 보안 시스템</h3>
+            <div class="news-hashtags">
+              <span>#SENDY</span>
+              <span>#보안</span>
+              <span>#디지털뱅킹</span>
+            </div>
+            <div class="news-graphic">
+              <div class="graphic-content">
+                <div class="graphic-icon">🔒</div>
+                <div class="graphic-text">최고 수준 보안</div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="news-card">
+            <div class="news-label">사업소식</div>
+            <h3>사용자 중심의 편리한 송금 경험, SENDY UX 개선</h3>
+            <div class="news-hashtags">
+              <span>#SENDY</span>
+              <span>#UX</span>
+              <span>#사용자경험</span>
+            </div>
+            <div class="news-graphic">
+              <div class="graphic-content">
+                <div class="graphic-icon">💡</div>
+                <div class="graphic-text">편리한 송금</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- 기술로 세상을 돕는 사람들 섹션 -->
+      <section class="people-section">
+        <div class="people-header">
+          <h2>기술로 세상을 돕는 사람들</h2>
+          <router-link to="/about" class="people-more-link">
+            함께하는 사람들 더 만나보기 →
+          </router-link>
+        </div>
+        <div class="people-container">
+          <div class="people-scroll">
+            <div class="people-card" style="background: #f8f9fa;">
+              <div class="people-photo">👩‍💻</div>
+              <div class="people-content">
+                <p class="people-description">"SENDY 프로젝트를 통해 금융 기술의 혁신을 이끌고 있습니다. 사용자 중심의 디자인과 보안을 중시합니다."</p>
+                <div class="people-info">
+                  <span class="people-name">김태형</span>
+                  <span class="people-role">SENDY | Backend Developer</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="people-card" style="background: #e3f2fd;">
+              <div class="people-photo">👨‍💻</div>
+              <div class="people-content">
+                <p class="people-description">"핀테크 분야에서 일하고 있습니다. 안전하고 편리한 송금 서비스를 만들어 사용자들에게 가치를 전달하고 싶습니다."</p>
+                <div class="people-info">
+                  <span class="people-name">엄인국</span>
+                  <span class="people-role">SENDY | Backend Developer</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="people-card" style="background: #f3e5f5;">
+              <div class="people-photo">👩‍💼</div>
+              <div class="people-content">
+                <p class="people-description">"데이터 분석과 백엔드 개발에 관심을 가지고 있습니다. SENDY의 안정적인 서비스를 위해 노력하고 있습니다."</p>
+                <div class="people-info">
+                  <span class="people-name">이진경</span>
+                  <span class="people-role">SENDY | Backend Developer</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="people-card" style="background: #fff3e0;">
+              <div class="people-photo">👨‍🔬</div>
+              <div class="people-content">
+                <p class="people-description">"AI와 머신러닝을 활용한 금융 서비스 개발에 참여하고 있습니다. 기술로 사회에 기여하는 방법을 고민합니다."</p>
+                <div class="people-info">
+                  <span class="people-name">박민수</span>
+                  <span class="people-role">AI LAB | ML Engineer</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="people-card" style="background: #e8f5e8;">
+              <div class="people-photo">👩‍🎨</div>
+              <div class="people-content">
+                <p class="people-description">"사용자 경험을 중시하는 디자이너입니다. SENDY의 직관적이고 아름다운 인터페이스를 만들어갑니다."</p>
+                <div class="people-info">
+                  <span class="people-name">최지영</span>
+                  <span class="people-role">UX LAB | UI/UX Designer</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 중복 카드들 (무한 스크롤을 위해) -->
+            <div class="people-card" style="background: #f8f9fa;">
+              <div class="people-photo">👩‍💻</div>
+              <div class="people-content">
+                <p class="people-description">"SENDY 프로젝트를 통해 금융 기술의 혁신을 이끌고 있습니다. 사용자 중심의 디자인과 보안을 중시합니다."</p>
+                <div class="people-info">
+                  <span class="people-name">김태형</span>
+                  <span class="people-role">SENDY | Backend Developer</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="people-card" style="background: #e3f2fd;">
+              <div class="people-photo">👨‍💻</div>
+              <div class="people-content">
+                <p class="people-description">"핀테크 분야에서 일하고 있습니다. 안전하고 편리한 송금 서비스를 만들어 사용자들에게 가치를 전달하고 싶습니다."</p>
+                <div class="people-info">
+                  <span class="people-name">엄인국</span>
+                  <span class="people-role">SENDY | Backend Developer</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="people-card" style="background: #f3e5f5;">
+              <div class="people-photo">👩‍💼</div>
+              <div class="people-content">
+                <p class="people-description">"데이터 분석과 백엔드 개발에 관심을 가지고 있습니다. SENDY의 안정적인 서비스를 위해 노력하고 있습니다."</p>
+                <div class="people-info">
+                  <span class="people-name">이진경</span>
+                  <span class="people-role">SENDY | Backend Developer</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="people-card" style="background: #fff3e0;">
+              <div class="people-photo">👨‍🔬</div>
+              <div class="people-content">
+                <p class="people-description">"AI와 머신러닝을 활용한 금융 서비스 개발에 참여하고 있습니다. 기술로 사회에 기여하는 방법을 고민합니다."</p>
+                <div class="people-info">
+                  <span class="people-name">박민수</span>
+                  <span class="people-role">AI LAB | ML Engineer</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="people-card" style="background: #e8f5e8;">
+              <div class="people-photo">👩‍🎨</div>
+              <div class="people-content">
+                <p class="people-description">"사용자 경험을 중시하는 디자이너입니다. SENDY의 직관적이고 아름다운 인터페이스를 만들어갑니다."</p>
+                <div class="people-info">
+                  <span class="people-name">최지영</span>
+                  <span class="people-role">UX LAB | UI/UX Designer</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -106,6 +279,254 @@
           </div>
         </div>
       </section>
+      
+      <!-- 기술로 세상을 돕는 사람들 섹션 -->
+      <section class="people-section">
+        <div class="people-header">
+          <h2>기술로 세상을 돕는 사람들</h2>
+          <router-link to="/about" class="people-more-link">
+            함께하는 사람들 더 만나보기 →
+          </router-link>
+        </div>
+        <div class="people-container">
+          <div class="people-scroll">
+            <div class="people-card" style="background: #f8f9fa;">
+              <div class="people-photo">👩‍💻</div>
+              <div class="people-content">
+                <p class="people-description">"SENDY 프로젝트를 통해 금융 기술의 혁신을 이끌고 있습니다. 사용자 중심의 디자인과 보안을 중시합니다."</p>
+                <div class="people-info">
+                  <span class="people-name">김태형</span>
+                  <span class="people-role">SENDY | Backend Developer</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="people-card" style="background: #e3f2fd;">
+              <div class="people-photo">👨‍💻</div>
+              <div class="people-content">
+                <p class="people-description">"핀테크 분야에서 일하고 있습니다. 안전하고 편리한 송금 서비스를 만들어 사용자들에게 가치를 전달하고 싶습니다."</p>
+                <div class="people-info">
+                  <span class="people-name">엄인국</span>
+                  <span class="people-role">SENDY | Backend Developer</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="people-card" style="background: #f3e5f5;">
+              <div class="people-photo">👩‍💼</div>
+              <div class="people-content">
+                <p class="people-description">"데이터 분석과 백엔드 개발에 관심을 가지고 있습니다. SENDY의 안정적인 서비스를 위해 노력하고 있습니다."</p>
+                <div class="people-info">
+                  <span class="people-name">이진경</span>
+                  <span class="people-role">SENDY | Backend Developer</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="people-card" style="background: #fff3e0;">
+              <div class="people-photo">👨‍🔬</div>
+              <div class="people-content">
+                <p class="people-description">"AI와 머신러닝을 활용한 금융 서비스 개발에 참여하고 있습니다. 기술로 사회에 기여하는 방법을 고민합니다."</p>
+                <div class="people-info">
+                  <span class="people-name">박민수</span>
+                  <span class="people-role">AI LAB | ML Engineer</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="people-card" style="background: #e8f5e8;">
+              <div class="people-photo">👩‍🎨</div>
+              <div class="people-content">
+                <p class="people-description">"사용자 경험을 중시하는 디자이너입니다. SENDY의 직관적이고 아름다운 인터페이스를 만들어갑니다."</p>
+                <div class="people-info">
+                  <span class="people-name">최지영</span>
+                  <span class="people-role">UX LAB | UI/UX Designer</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 중복 카드들 (무한 스크롤을 위해) -->
+            <div class="people-card" style="background: #f8f9fa;">
+              <div class="people-photo">👩‍💻</div>
+              <div class="people-content">
+                <p class="people-description">"SENDY 프로젝트를 통해 금융 기술의 혁신을 이끌고 있습니다. 사용자 중심의 디자인과 보안을 중시합니다."</p>
+                <div class="people-info">
+                  <span class="people-name">김태형</span>
+                  <span class="people-role">SENDY | Backend Developer</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="people-card" style="background: #e3f2fd;">
+              <div class="people-photo">👨‍💻</div>
+              <div class="people-content">
+                <p class="people-description">"핀테크 분야에서 일하고 있습니다. 안전하고 편리한 송금 서비스를 만들어 사용자들에게 가치를 전달하고 싶습니다."</p>
+                <div class="people-info">
+                  <span class="people-name">엄인국</span>
+                  <span class="people-role">SENDY | Backend Developer</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="people-card" style="background: #f3e5f5;">
+              <div class="people-photo">👩‍💼</div>
+              <div class="people-content">
+                <p class="people-description">"데이터 분석과 백엔드 개발에 관심을 가지고 있습니다. SENDY의 안정적인 서비스를 위해 노력하고 있습니다."</p>
+                <div class="people-info">
+                  <span class="people-name">이진경</span>
+                  <span class="people-role">SENDY | Backend Developer</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="people-card" style="background: #fff3e0;">
+              <div class="people-photo">👨‍🔬</div>
+              <div class="people-content">
+                <p class="people-description">"AI와 머신러닝을 활용한 금융 서비스 개발에 참여하고 있습니다. 기술로 사회에 기여하는 방법을 고민합니다."</p>
+                <div class="people-info">
+                  <span class="people-name">박민수</span>
+                  <span class="people-role">AI LAB | ML Engineer</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="people-card" style="background: #e8f5e8;">
+              <div class="people-photo">👩‍🎨</div>
+              <div class="people-content">
+                <p class="people-description">"사용자 경험을 중시하는 디자이너입니다. SENDY의 직관적이고 아름다운 인터페이스를 만들어갑니다."</p>
+                <div class="people-info">
+                  <span class="people-name">최지영</span>
+                  <span class="people-role">UX LAB | UI/UX Designer</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- 사용자 후기 섹션 -->
+      <section class="reviews-section">
+        <div class="reviews-header">
+          <h2>SENDY를 사용하는 사람들</h2>
+          <router-link to="/about" class="see-more-link">
+            함께하는 사람들 더 만나보기 →
+          </router-link>
+        </div>
+        <div class="reviews-container">
+          <div class="reviews-scroll">
+            <div class="review-card">
+              <div class="review-photo">👨‍💻</div>
+              <div class="review-content">
+                <p class="review-text">"SENDY 덕분에 송금이 정말 편리해졌어요. 안전하고 빠른 서비스에 만족합니다!"</p>
+                <div class="review-author">
+                  <span class="author-name">김민수</span>
+                  <span class="author-role">개발자</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="review-card">
+              <div class="review-photo">👩‍💼</div>
+              <div class="review-content">
+                <p class="review-text">"디지털 뱅킹 서비스 중에서 가장 사용하기 쉬워요. UI가 직관적이고 깔끔합니다."</p>
+                <div class="review-author">
+                  <span class="author-name">이영희</span>
+                  <span class="author-role">디자이너</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="review-card">
+              <div class="review-photo">👨‍💼</div>
+              <div class="review-content">
+                <p class="review-text">"보안이 정말 탄탄해서 안심하고 사용할 수 있어요. 핀테크 서비스의 새로운 기준이네요."</p>
+                <div class="review-author">
+                  <span class="author-name">박철수</span>
+                  <span class="author-role">보안 전문가</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="review-card">
+              <div class="review-photo">👩‍🎓</div>
+              <div class="review-content">
+                <p class="review-text">"학생인데도 쉽게 사용할 수 있어요. 복잡한 절차 없이 바로 송금할 수 있어서 좋습니다."</p>
+                <div class="review-author">
+                  <span class="author-name">최지영</span>
+                  <span class="author-role">대학생</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="review-card">
+              <div class="review-photo">👨‍🏫</div>
+              <div class="review-content">
+                <p class="review-text">"교직원 급여 송금도 SENDY로 처리하고 있어요. 빠르고 정확한 서비스에 감사합니다."</p>
+                <div class="review-author">
+                  <span class="author-name">정교수</span>
+                  <span class="author-role">교수</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 중복 카드들 (무한 스크롤을 위해) -->
+            <div class="review-card">
+              <div class="review-photo">👨‍💻</div>
+              <div class="review-content">
+                <p class="review-text">"SENDY 덕분에 송금이 정말 편리해졌어요. 안전하고 빠른 서비스에 만족합니다!"</p>
+                <div class="review-author">
+                  <span class="author-name">김민수</span>
+                  <span class="author-role">개발자</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="review-card">
+              <div class="review-photo">👩‍💼</div>
+              <div class="review-content">
+                <p class="review-text">"디지털 뱅킹 서비스 중에서 가장 사용하기 쉬워요. UI가 직관적이고 깔끔합니다."</p>
+                <div class="review-author">
+                  <span class="author-name">이영희</span>
+                  <span class="author-role">디자이너</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="review-card">
+              <div class="review-photo">👨‍💼</div>
+              <div class="review-content">
+                <p class="review-text">"보안이 정말 탄탄해서 안심하고 사용할 수 있어요. 핀테크 서비스의 새로운 기준이네요."</p>
+                <div class="review-author">
+                  <span class="author-name">박철수</span>
+                  <span class="author-role">보안 전문가</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="review-card">
+              <div class="review-photo">👩‍🎓</div>
+              <div class="review-content">
+                <p class="review-text">"학생인데도 쉽게 사용할 수 있어요. 복잡한 절차 없이 바로 송금할 수 있어서 좋습니다."</p>
+                <div class="review-author">
+                  <span class="author-name">최지영</span>
+                  <span class="author-role">대학생</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="review-card">
+              <div class="review-photo">👨‍🏫</div>
+              <div class="review-content">
+                <p class="review-text">"교직원 급여 송금도 SENDY로 처리하고 있어요. 빠르고 정확한 서비스에 감사합니다."</p>
+                <div class="review-author">
+                  <span class="author-name">정교수</span>
+                  <span class="author-role">교수</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   </div>
 </template>
@@ -172,6 +593,11 @@ export default {
           day: 'numeric'
         })
       }
+    },
+    
+    handleFeatureClick(feature) {
+      alert('로그인 이후 사용가능합니다.')
+      this.$router.push('/login')
     }
   }
 }
@@ -179,13 +605,13 @@ export default {
 
 <style scoped>
 .home-container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 20px;
 }
 
 .welcome-section {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #60A5FA 0%, #06B6D4 100%);
   color: white;
   padding: 60px 40px;
   border-radius: 20px;
@@ -221,7 +647,7 @@ export default {
 
 .btn-primary {
   background: white;
-  color: #667eea;
+  color: #60A5FA;
 }
 
 .btn-secondary {
@@ -445,6 +871,7 @@ export default {
   text-align: center;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease;
+  cursor: pointer;
 }
 
 .feature-item:hover {
@@ -466,5 +893,341 @@ export default {
   margin: 0;
   color: #666;
   line-height: 1.6;
+}
+
+/* 기술로 세상을 돕는 사람들 섹션 스타일 */
+.people-section {
+  margin-top: 80px;
+  margin-bottom: 60px;
+  overflow: hidden;
+}
+
+.people-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.people-header h2 {
+  color: #333;
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.people-more-link {
+  color: #60A5FA;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 16px;
+  transition: color 0.3s ease;
+}
+
+.people-more-link:hover {
+  color: #06B6D4;
+}
+
+.people-container {
+  overflow: hidden;
+  position: relative;
+}
+
+.people-scroll {
+  display: flex;
+  gap: 30px;
+  animation: scrollLeft 40s linear infinite;
+  width: max-content;
+}
+
+.people-card {
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  min-width: 350px;
+  max-width: 350px;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+.people-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.people-photo {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #60A5FA 0%, #06B6D4 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.people-content {
+  flex: 1;
+}
+
+.people-description {
+  color: #333;
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  font-style: italic;
+}
+
+.people-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.people-name {
+  font-weight: 600;
+  color: #333;
+  font-size: 16px;
+}
+
+.people-role {
+  color: #666;
+  font-size: 14px;
+}
+
+/* 뉴스 섹션 스타일 */
+.news-section {
+  margin-top: 60px;
+  margin-bottom: 40px;
+}
+
+.news-section h2 {
+  text-align: center;
+  margin-bottom: 40px;
+  color: #333;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.news-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 30px;
+}
+
+.news-card {
+  background: white;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.news-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.news-label {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: linear-gradient(135deg, #60A5FA 0%, #06B6D4 100%);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.news-card h3 {
+  margin: 40px 0 20px 0;
+  color: #333;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+  min-height: 50px;
+}
+
+.news-hashtags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.news-hashtags span {
+  background: #f1f5f9;
+  color: #475569;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.news-graphic {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 20px;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.graphic-content {
+  text-align: center;
+  color: white;
+}
+
+.graphic-icon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.graphic-text {
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+/* 사용자 후기 섹션 스타일 */
+.reviews-section {
+  margin-top: 80px;
+  margin-bottom: 60px;
+  overflow: hidden;
+}
+
+.reviews-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.reviews-header h2 {
+  color: #333;
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.see-more-link {
+  color: #60A5FA;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 16px;
+  transition: color 0.3s ease;
+}
+
+.see-more-link:hover {
+  color: #06B6D4;
+}
+
+.reviews-container {
+  overflow: hidden;
+  position: relative;
+}
+
+.reviews-scroll {
+  display: flex;
+  gap: 30px;
+  animation: scrollLeft 30s linear infinite;
+  width: max-content;
+}
+
+@keyframes scrollLeft {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.review-card {
+  background: white;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  min-width: 350px;
+  max-width: 350px;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+.review-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.review-photo {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #60A5FA 0%, #06B6D4 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.review-content {
+  flex: 1;
+}
+
+.review-text {
+  color: #333;
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  font-style: italic;
+}
+
+.review-author {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.author-name {
+  font-weight: 600;
+  color: #333;
+  font-size: 16px;
+}
+
+.author-role {
+  color: #666;
+  font-size: 14px;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+  .reviews-header,
+  .people-header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+  
+  .reviews-header h2,
+  .people-header h2 {
+    font-size: 24px;
+  }
+  
+  .review-card {
+    min-width: 300px;
+    max-width: 300px;
+    padding: 25px;
+  }
+  
+  .reviews-scroll {
+    gap: 20px;
+  }
 }
 </style> 

@@ -143,7 +143,7 @@ export default {
     setDefaultData() {
       this.aboutData = {
         title: 'SENDY 소개',
-        description: '사용자가 휴대폰 번호로 간편하게 송금할 수 있는 간편 송금 서비스 SENDY 개발 및 AWS 배포',
+        description: '사용자가 휴대폰 번호로 간편하게 송금할 수 있는 간편 송금 서비스 SENDY',
         intro: {
           title: '프로젝트 목표',
           content: '해당 프로젝트를 통해 금융 거래의 안정성과 일관성을 보장하며 분산환경에서 발생할 수 있는 데이터 불일치 문제를 해결, 금융권에서 요구하는 보안기준과 규제사항들의 이해를 통해 개발에 필요한 핵심 기술들을 경험하였습니다.'
@@ -186,7 +186,7 @@ export default {
           {
             avatar: '👩‍💻',
             name: '이진경',
-            role: 'Frontend Developer',
+            role: 'Backend Developer',
             link: ''
           }
         ],
