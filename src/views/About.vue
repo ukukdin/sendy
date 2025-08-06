@@ -142,74 +142,56 @@ export default {
     
     setDefaultData() {
       this.aboutData = {
-        title: '송파모임 소개',
-        description: '송파에서 IT 하는 사람들을 위해 시작한 기술 및 IT 정보를 보다 쉽고 빠르게 접하게 하기 위해서 만든 블로그입니다.',
+        title: 'SENDY 소개',
+        description: '사용자가 휴대폰 번호로 간편하게 송금할 수 있는 간편 송금 서비스 SENDY 개발 및 AWS 배포',
         intro: {
-          title: '우리는 누구인가요?',
-          content: '송파 개발자 모임은 송파구를 중심으로 활동하는 개발자들의 커뮤니티입니다.'
+          title: '프로젝트 목표',
+          content: '해당 프로젝트를 통해 금융 거래의 안정성과 일관성을 보장하며 분산환경에서 발생할 수 있는 데이터 불일치 문제를 해결, 금융권에서 요구하는 보안기준과 규제사항들의 이해를 통해 개발에 필요한 핵심 기술들을 경험하였습니다.'
         },
         features: [
           {
-            icon: '🏢',
-            title: '송파 IT 커뮤니티',
-            description: '송파에서 IT 하는 사람들을 위해 만든 블로그'
+            icon: '💸',
+            title: '간편 송금',
+            description: '휴대폰 번호로 간편하게 송금할 수 있는 서비스'
           },
           {
-            icon: '📚',
-            title: '기술 정보 공유',
-            description: '국내외 기술 블로그 정보 공유'
+            icon: '🔒',
+            title: '보안 시스템',
+            description: '금융권 보안기준을 준수하는 안전한 시스템'
           },
           {
-            icon: '💡',
-            title: '사이드 프로젝트',
-            description: '비영리단체를 위한 사이드프로젝트'
+            icon: '📊',
+            title: '거래내역 관리',
+            description: '실시간 거래내역 조회 및 관리 기능'
           },
           {
-            icon: '🤝',
-            title: '스터디 모임',
-            description: '하고싶은 공부 내용 공유 및 모임 주최'
+            icon: '⚡',
+            title: '고성능 처리',
+            description: '분산환경에서의 데이터 일관성 보장'
           }
         ],
         team: [
           {
-            avatar: '👨‍💼',
-            name: '오성우',
-            role: '전략기획',
-            link: 'https://www.linkedin.com/in/seongwoo-oh-4b1b1b1b1b/'
-          },
-          {
-            avatar: '👩‍💼',
-            name: '김훈기',
-            role: '영업',
-            link: ''
-          },
-          {
             avatar: '👨‍💻',
-            name: '김누리',
-            role: 'Backend',
-            link: ''
-          },
-          {
-            avatar: '👨‍💻',
-            name: '강성빈',
-            role: 'WEB',
+            name: '김태형',
+            role: 'Backend Developer',
             link: ''
           },
           {
             avatar: '👨‍💻',
             name: '엄인국',
-            role: 'Backend',
+            role: 'Backend Developer',
             link: ''
           },
           {
-            avatar: '👩‍💼',
-            name: '김하늘',
-            role: 'PM',
+            avatar: '👩‍💻',
+            name: '이진경',
+            role: 'Frontend Developer',
             link: ''
           }
         ],
         contact: {
-          description: '궁금한 점이나 제안사항이 있으시면 언제든지 연락해 주세요!',
+          description: 'SENDY 프로젝트에 대한 문의사항이 있으시면 언제든지 연락해 주세요!',
           items: [
             {
               icon: '📧',
