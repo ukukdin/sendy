@@ -1,16 +1,10 @@
-// 간단한 인증 서비스
-export const authService = {
-  // 관리자 계정 정보
-  adminAccount: {
-    email: 'admin@songpa.com',
-    password: 'admin123',
-    name: '관리자',
-    role: 'admin'
-  },
+// SENDY 인증 서비스
+import { authAPI } from './apiService'
 
+export const authService = {
   // 현재 로그인된 사용자 정보
   getCurrentUser() {
-    const userStr = localStorage.getItem('currentUser')
+    const userStr = localStorage.getItem('sendyUser')
     return userStr ? JSON.parse(userStr) : null
   },
 
@@ -19,37 +13,90 @@ export const authService = {
     return this.getCurrentUser() !== null
   },
 
-  // 관리자 권한 확인
-  isAdmin() {
-    const user = this.getCurrentUser()
-    return user && user.role === 'admin'
-  },
-
-  // 관리자 로그인
-  loginAsAdmin() {
-    localStorage.setItem('currentUser', JSON.stringify(this.adminAccount))
-    return this.adminAccount
-  },
-
-  // 일반 사용자 로그인 (소셜 로그인 시뮬레이션)
-  loginWithSocial(provider, userData) {
-    const user = {
-      email: userData.email || `user@${provider}.com`,
-      name: userData.name || `${provider} 사용자`,
-      provider: provider,
-      role: 'user'
+  // 일반 사용자 로그인
+  async login(email, password) {
+    try {
+      const response = await authAPI.login({ email, password })
+      
+      if (response.success) {
+        const user = {
+          email: email,
+          name: response.data.name || email.split('@')[0],
+          role: 'user',
+          balance: response.data.balance || 1000000
+        }
+        localStorage.setItem('sendyUser', JSON.stringify(user))
+        return user
+      } else {
+        throw new Error(response.message || '로그인에 실패했습니다.')
+      }
+    } catch (error) {
+      console.error('로그인 오류:', error)
+      // 백엔드 연결 실패 시 로컬 시뮬레이션
+      if (email && password) {
+        const user = {
+          email: email,
+          name: email.split('@')[0],
+          role: 'user',
+          balance: 1000000
+        }
+        localStorage.setItem('sendyUser', JSON.stringify(user))
+        return user
+      }
+      return null
     }
-    localStorage.setItem('currentUser', JSON.stringify(user))
-    return user
+  },
+
+  // 회원가입
+  async signup(userData) {
+    try {
+      const response = await authAPI.signup(userData)
+      
+      if (response.success) {
+        const user = {
+          email: userData.email,
+          name: userData.username,
+          phone: userData.phone,
+          role: 'user',
+          balance: 1000000
+        }
+        localStorage.setItem('sendyUser', JSON.stringify(user))
+        return user
+      } else {
+        throw new Error(response.message || '회원가입에 실패했습니다.')
+      }
+    } catch (error) {
+      console.error('회원가입 오류:', error)
+      // 백엔드 연결 실패 시 로컬 시뮬레이션
+      const user = {
+        email: userData.email,
+        name: userData.username,
+        phone: userData.phone,
+        role: 'user',
+        balance: 1000000
+      }
+      localStorage.setItem('sendyUser', JSON.stringify(user))
+      return user
+    }
   },
 
   // 로그아웃
-  logout() {
-    localStorage.removeItem('currentUser')
+  async logout() {
+    try {
+      await authAPI.logout()
+    } catch (error) {
+      console.error('로그아웃 오류:', error)
+    } finally {
+      localStorage.removeItem('sendyUser')
+    }
   },
 
-  // 관리자 계정 확인 (로그인 시 사용)
-  checkAdminCredentials(email, password) {
-    return email === this.adminAccount.email && password === this.adminAccount.password
+  // 잔액 업데이트
+  updateBalance(amount) {
+    const user = this.getCurrentUser()
+    if (user) {
+      user.balance = amount
+      localStorage.setItem('sendyUser', JSON.stringify(user))
+    }
   }
 } 

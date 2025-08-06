@@ -1,529 +1,470 @@
 <template>
-  <div class="home">
-    <!-- 히어로 섹션 -->
-    <section class="hero">
-      <div class="container">
-        <div class="hero-content">
-          <div class="hero-text">
-            <h1 class="hero-title">송파 개발자들 모여라!~</h1>
-            <p class="hero-subtitle">
-              최신 기술 트렌드부터 실무 노하우를 담은 기술블로그를 공유합니다,<br>
-              개발자의 성장을 돕는 다양한 콘텐츠를 만나보세요.
-            </p>
-            <div class="hero-actions">
-              <router-link to="/posts" class="btn btn-primary">
-                포스트 둘러보기
-              </router-link>
-              <router-link to="/about" class="btn btn-secondary">
-                블로그 소개
-              </router-link>
-            </div>
-          </div>
-          <div class="hero-image">
-            <div class="hero-visual">
-              <div class="code-block">
-                <div class="code-header">
-                  <span class="dot red"></span>
-                  <span class="dot yellow"></span>
-                  <span class="dot green"></span>
-                </div>
-                <div class="code-content">
-                  <div class="code-line">
-                    <span class="keyword">function</span> 
-                    <span class="function">createBlog</span>() {
-                  </div>
-                  <div class="code-line">
-                    &nbsp;&nbsp;<span class="keyword">return</span> 
-                    <span class="string">'Amazing Content'</span>;
-                  </div>
-                  <div class="code-line">}</div>
-                </div>
-              </div>
-            </div>
-          </div>
+  <div class="home-container">
+    <!-- 환영 섹션 -->
+    <section class="welcome-section">
+      <div class="welcome-content">
+        <h1>SENDY</h1>
+        <p>안전하고 편리한 디지털 뱅킹 서비스</p>
+        <div class="welcome-actions" v-if="!isLoggedIn">
+          <router-link to="/signup" class="btn-primary">회원가입</router-link>
+          <router-link to="/login" class="btn-secondary">로그인</router-link>
+        </div>
+        <div class="welcome-actions" v-else>
+          <router-link to="/transfer" class="btn-primary">송금하기</router-link>
+          <router-link to="/transactions" class="btn-secondary">거래내역</router-link>
         </div>
       </div>
     </section>
 
-    <!-- 최신 포스트 섹션 -->
-    <section class="recent-posts">
-      <div class="container">
-        <div class="section-header">
-          <h2 class="section-title">최신 포스트</h2>
-          <p class="section-subtitle">개발자들이 관심 있어 할 최신 기술 동향과 실무 팁을 확인해보세요</p>
+    <!-- 로그인하지 않은 경우 -->
+    <div v-if="!isLoggedIn" class="guest-content">
+      <section class="features-section">
+        <h2>SENDY의 주요 기능</h2>
+        <div class="features-grid">
+          <div class="feature-item">
+            <div class="feature-icon">💸</div>
+            <h3>빠른 송금</h3>
+            <p>안전하고 빠른 송금 서비스</p>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">📊</div>
+            <h3>거래내역</h3>
+            <p>상세한 거래 내역 확인</p>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🔒</div>
+            <h3>보안</h3>
+            <p>최고 수준의 보안 시스템</p>
+          </div>
         </div>
-        
-        <div v-if="loading" class="loading">
-          <div class="spinner"></div>
-          <p>포스트를 불러오는 중...</p>
-        </div>
-        
-        <div v-else-if="error" class="error">
-          <p>{{ error }}</p>
-        </div>
-        
-        <div v-else class="posts-grid">
-          <article 
-            v-for="post in recentPosts" 
-            :key="post.id" 
-            class="post-card"
-            @click="goToPost(post)"
-          >
-            <div class="post-header">
-              <div class="post-category" :class="getCategoryClass(post.category)">
-                {{ post.category || 'Tech' }}
-              </div>
-              <div class="post-company" v-if="post.company">
-                {{ post.company }}
-              </div>
-            </div>
-            <div class="post-content">
-              <h3 class="post-title">{{ post.title }}</h3>
-              <p class="post-excerpt">{{ getExcerpt(post.content) }}</p>
-              
-              <div class="post-tags" v-if="post.tags && post.tags.length">
-                <span v-for="tag in post.tags.slice(0, 2)" :key="tag" class="tag">
-                  {{ tag }}
-                </span>
-              </div>
-              
-              <div class="post-meta">
-                <div class="author-info">
-                  <div class="author-avatar">{{ getAuthorInitial(post.author) }}</div>
-                  <div class="author-details">
-                    <span class="author-name">{{ post.author }}</span>
-                    <span class="post-date">{{ formatDate(post.createdAt) }}</span>
-                  </div>
-                </div>
-                <div class="post-stats">
-                  <span class="read-time" v-if="post.readTime">📖 {{ post.readTime }}</span>
-                </div>
-              </div>
-            </div>
-          </article>
-        </div>
-        
-        <div v-if="!loading && recentPosts.length === 0" class="no-posts">
-          <p>아직 포스트가 없습니다.</p>
-        </div>
+      </section>
+    </div>
 
-        <div class="section-footer">
-          <router-link to="/posts" class="btn btn-outline">
-            모든 포스트 보기
+    <!-- 로그인한 경우 -->
+    <div v-else>
+      <!-- 계좌 정보 섹션 -->
+      <section class="account-section">
+        <div class="account-card">
+          <h2>내 계좌</h2>
+          <div class="account-info">
+            <div class="account-number">
+              <span>계좌번호:</span>
+              <span class="account-number-value">123-456-789012</span>
+            </div>
+            <div class="account-balance">
+              <span>잔액:</span>
+              <span class="balance-amount">₩{{ formatNumber(currentUser.balance) }}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 빠른 메뉴 섹션 -->
+      <section class="quick-menu-section">
+        <h2>빠른 메뉴</h2>
+        <div class="quick-menu-grid">
+          <router-link to="/transfer" class="quick-menu-item">
+            <div class="menu-icon">💸</div>
+            <span>송금</span>
           </router-link>
+          <router-link to="/transactions" class="quick-menu-item">
+            <div class="menu-icon">📊</div>
+            <span>거래내역</span>
+          </router-link>
+          <div class="quick-menu-item">
+            <div class="menu-icon">💳</div>
+            <span>카드관리</span>
+          </div>
+          <div class="quick-menu-item">
+            <div class="menu-icon">⚙️</div>
+            <span>설정</span>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <!-- 최근 거래내역 섹션 -->
+      <section class="recent-transactions-section">
+        <div class="section-header">
+          <h2>최근 거래내역</h2>
+          <router-link to="/transactions" class="view-all-link">전체보기</router-link>
+        </div>
+        <div class="recent-transactions">
+          <div 
+            v-for="transaction in recentTransactions" 
+            :key="transaction.id"
+            class="transaction-item"
+          >
+            <div class="transaction-info">
+              <div class="transaction-name">{{ transaction.name }}</div>
+              <div class="transaction-date">{{ formatDate(transaction.date) }}</div>
+            </div>
+            <div class="transaction-amount" :class="transaction.type">
+              <span v-if="transaction.type === 'sent'">-</span>
+              <span v-else>+</span>
+              ₩{{ formatNumber(transaction.amount) }}
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
   </div>
 </template>
 
 <script>
-import { postService } from '@/services/postService'
+import { authService } from '@/services/authService'
 
 export default {
   name: 'Home',
   data() {
     return {
-      recentPosts: [],
-      loading: true,
-      error: null
+      isLoggedIn: false,
+      currentUser: null,
+      recentTransactions: [
+        {
+          id: 1,
+          name: '김철수',
+          amount: 50000,
+          type: 'sent',
+          date: new Date('2024-01-15')
+        },
+        {
+          id: 2,
+          name: '이영희',
+          amount: 100000,
+          type: 'received',
+          date: new Date('2024-01-14')
+        },
+        {
+          id: 3,
+          name: '박민수',
+          amount: 30000,
+          type: 'sent',
+          date: new Date('2024-01-13')
+        }
+      ]
     }
   },
-  async mounted() {
-    // 즉시 로딩 시작
-    this.fetchRecentPosts()
+  mounted() {
+    this.checkAuthStatus()
   },
   methods: {
-    async fetchRecentPosts() {
-      try {
-        this.loading = true
-        this.error = null
-        
-        // 공통 서비스에서 최신 3개 포스트 가져오기
-        this.recentPosts = await postService.getRecentPosts(3)
-        
-      } catch (error) {
-        console.error('포스트 로딩 실패:', error)
-        this.error = '포스트를 불러오는데 실패했습니다.'
-      } finally {
-        this.loading = false
-      }
+    checkAuthStatus() {
+      this.isLoggedIn = authService.isLoggedIn()
+      this.currentUser = authService.getCurrentUser()
     },
-    goToPost(post) {
-      if (post.url) {
-        // 외부 URL이 있으면 새 탭에서 열기
-        window.open(post.url, '_blank')
+    
+    formatNumber(num) {
+      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    },
+    
+    formatDate(date) {
+      const now = new Date()
+      const diffTime = Math.abs(now - date)
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+      
+      if (diffDays === 1) {
+        return '어제'
+      } else if (diffDays === 0) {
+        return '오늘'
       } else {
-        // 내부 포스트 상세 페이지로 이동
-        this.$router.push(`/posts/${post.id}`)
+        return date.toLocaleDateString('ko-KR', {
+          month: 'short',
+          day: 'numeric'
+        })
       }
-    },
-    formatDate(dateString) {
-      const date = new Date(dateString)
-      return date.toLocaleDateString('ko-KR', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit'
-      })
-    },
-    getExcerpt(content) {
-      return content.length > 100 ? content.substring(0, 100) + '...' : content
-    },
-    getAuthorInitial(author) {
-      if (!author) return 'A'
-      // 한국어 이름의 경우 첫 글자, 영어 이름의 경우 첫 글자들
-      if (author.includes(',')) {
-        return author.split(',')[0].charAt(0).toUpperCase()
-      }
-      return author.charAt(0).toUpperCase()
-    },
-    getCategoryClass(category) {
-      const categoryMap = {
-        'Frontend': 'category-frontend',
-        'AI/ML': 'category-ai',
-        'Performance': 'category-performance',
-        'Vue.js': 'category-vue',
-        'Architecture': 'category-architecture',
-        'TypeScript': 'category-typescript',
-        'DevOps': 'category-devops',
-        'Backend': 'category-backend',
-        'Tech': 'category-tech'
-      }
-      return categoryMap[category] || 'category-default'
     }
   }
 }
 </script>
 
 <style scoped>
-.home {
-  width: 100%;
+.home-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-/* 히어로 섹션 */
-.hero {
+.welcome-section {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  padding: 80px 0;
-  min-height: 600px;
-  display: flex;
-  align-items: center;
-}
-
-.hero-content {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 60px;
-  align-items: center;
-}
-
-.hero-title {
-  font-size: 48px;
-  font-weight: 700;
-  line-height: 1.2;
-  margin-bottom: 24px;
-}
-
-.hero-subtitle {
-  font-size: 20px;
-  line-height: 1.6;
+  padding: 60px 40px;
+  border-radius: 20px;
+  text-align: center;
   margin-bottom: 40px;
+}
+
+.welcome-content h1 {
+  font-size: 36px;
+  margin: 0 0 10px 0;
+  font-weight: bold;
+}
+
+.welcome-content p {
+  font-size: 18px;
+  margin: 0 0 30px 0;
   opacity: 0.9;
 }
 
-.hero-actions {
+.welcome-actions {
   display: flex;
-  gap: 16px;
+  gap: 15px;
+  justify-content: center;
 }
 
-.btn {
-  display: inline-flex;
-  align-items: center;
-  padding: 14px 28px;
+.btn-primary, .btn-secondary {
+  padding: 12px 24px;
   border-radius: 8px;
   text-decoration: none;
   font-weight: 600;
-  font-size: 16px;
-  transition: all 0.2s ease;
-  border: 2px solid transparent;
+  transition: transform 0.2s ease;
 }
 
 .btn-primary {
-  background: #ffffff;
+  background: white;
   color: #667eea;
-}
-
-.btn-primary:hover {
-  background: #f8fafc;
-  transform: translateY(-2px);
 }
 
 .btn-secondary {
-  background: transparent;
+  background: rgba(255, 255, 255, 0.2);
   color: white;
-  border-color: rgba(255, 255, 255, 0.3);
+  border: 2px solid white;
 }
 
-.btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.5);
+.btn-primary:hover, .btn-secondary:hover {
+  transform: translateY(-2px);
 }
 
-.btn-outline {
-  background: transparent;
-  color: #667eea;
-  border-color: #667eea;
+.account-section {
+  margin-bottom: 40px;
 }
 
-.btn-outline:hover {
-  background: #667eea;
-  color: white;
-}
-
-/* 히어로 비주얼 */
-.hero-visual {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.code-block {
-  background: #1e293b;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-  font-family: 'Monaco', 'Menlo', monospace;
-  width: 100%;
-  max-width: 400px;
-}
-
-.code-header {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
-.dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-}
-
-.dot.red { background: #ef4444; }
-.dot.yellow { background: #f59e0b; }
-.dot.green { background: #10b981; }
-
-.code-content {
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-.code-line {
-  margin-bottom: 4px;
-}
-
-.keyword { color: #c084fc; }
-.function { color: #60a5fa; }
-.string { color: #34d399; }
-
-/* 최신 포스트 섹션 */
-.recent-posts {
-  padding: 80px 0;
-  background: #f8fafc;
-}
-
-.section-header {
-  text-align: center;
-  margin-bottom: 60px;
-}
-
-.section-title {
-  font-size: 36px;
-  font-weight: 700;
-  color: #1e293b;
-  margin-bottom: 16px;
-}
-
-.section-subtitle {
-  font-size: 18px;
-  color: #64748b;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.posts-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 30px;
-  margin-bottom: 60px;
-}
-
-.post-card {
+.account-card {
   background: white;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-  transition: all 0.3s ease;
-  cursor: pointer;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
-.post-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+.account-card h2 {
+  margin: 0 0 20px 0;
+  color: #333;
+  font-size: 20px;
 }
 
-.post-image {
-  height: 200px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  position: relative;
+.account-info {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  gap: 15px;
 }
 
-.post-category {
-  background: rgba(255,255,255,0.2);
-  color: white;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.post-content {
-  padding: 24px;
-}
-
-.post-meta {
+.account-number, .account-balance {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
-  font-size: 14px;
-  color: #64748b;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
 }
 
-.post-author {
-  font-weight: 600;
-  color: #667eea;
+.account-number-value {
+  font-weight: bold;
+  color: #007bff;
 }
 
-.post-title {
+.balance-amount {
+  font-weight: bold;
+  font-size: 18px;
+  color: #28a745;
+}
+
+.quick-menu-section {
+  margin-bottom: 40px;
+}
+
+.quick-menu-section h2 {
+  margin: 0 0 20px 0;
+  color: #333;
   font-size: 20px;
-  font-weight: 600;
-  color: #1e293b;
-  margin-bottom: 12px;
-  line-height: 1.4;
 }
 
-.post-excerpt {
-  color: #64748b;
-  line-height: 1.6;
-  margin-bottom: 16px;
+.quick-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 20px;
 }
 
-.post-footer {
-  display: flex;
-  justify-content: flex-end;
+.quick-menu-item {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  text-decoration: none;
+  color: #333;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
 }
 
-.read-more {
-  color: #667eea;
+.quick-menu-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.menu-icon {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.quick-menu-item span {
   font-weight: 600;
   font-size: 14px;
 }
 
-.section-footer {
-  text-align: center;
+.recent-transactions-section {
+  margin-bottom: 40px;
 }
 
-/* 로딩 및 에러 상태 */
-.loading {
-  text-align: center;
-  padding: 60px 0;
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #e2e8f0;
-  border-top: 4px solid #667eea;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 16px;
+.section-header h2 {
+  margin: 0;
+  color: #333;
+  font-size: 20px;
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+.view-all-link {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
 }
 
-.error {
-  text-align: center;
-  padding: 60px 0;
-  color: #ef4444;
+.view-all-link:hover {
+  text-decoration: underline;
 }
 
-.no-posts {
-  text-align: center;
-  padding: 60px 0;
-  color: #64748b;
+.recent-transactions {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
-/* 반응형 디자인 */
-@media (max-width: 1024px) {
-  .hero-content {
-    grid-template-columns: 1fr;
-    gap: 40px;
-    text-align: center;
-  }
-  
-  .hero-title {
-    font-size: 40px;
-  }
-  
-  .posts-grid {
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 24px;
-  }
+.transaction-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.transaction-item:last-child {
+  border-bottom: none;
+}
+
+.transaction-info {
+  flex: 1;
+}
+
+.transaction-name {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.transaction-date {
+  font-size: 12px;
+  color: #666;
+}
+
+.transaction-amount {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.transaction-amount.sent {
+  color: #dc3545;
+}
+
+.transaction-amount.received {
+  color: #28a745;
 }
 
 @media (max-width: 768px) {
-  .hero {
-    padding: 60px 0;
+  .welcome-section {
+    padding: 40px 20px;
   }
   
-  .hero-title {
-    font-size: 32px;
+  .welcome-content h1 {
+    font-size: 28px;
   }
   
-  .hero-subtitle {
-    font-size: 18px;
-  }
-  
-  .hero-actions {
+  .welcome-actions {
     flex-direction: column;
     align-items: center;
   }
   
-  .btn {
-    width: 100%;
-    max-width: 280px;
-    justify-content: center;
+  .quick-menu-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
   
-  .recent-posts {
-    padding: 60px 0;
-  }
-  
-  .section-title {
-    font-size: 28px;
-  }
-  
-  .posts-grid {
+  .features-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.guest-content {
+  margin-top: 40px;
+}
+
+.features-section {
+  margin-bottom: 40px;
+}
+
+.features-section h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #333;
+  font-size: 24px;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+}
+
+.feature-item {
+  background: white;
+  border-radius: 16px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.feature-item:hover {
+  transform: translateY(-5px);
+}
+
+.feature-icon {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+.feature-item h3 {
+  margin: 0 0 15px 0;
+  color: #333;
+  font-size: 20px;
+}
+
+.feature-item p {
+  margin: 0;
+  color: #666;
+  line-height: 1.6;
 }
 </style> 
