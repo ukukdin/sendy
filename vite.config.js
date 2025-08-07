@@ -16,7 +16,7 @@ export default defineConfig({
     },
   },
   // GitHub Pages 배포를 위한 설정
-  base: process.env.NODE_ENV === 'production' ? '/songpa-gether/' : '/',
+  base: process.env.NODE_ENV === 'production' ? '/sendy/' : '/',
   build: {
     outDir: 'dist', // 빌드 결과를 dist 폴더에 저장
     emptyOutDir: true

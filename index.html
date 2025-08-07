@@ -40,7 +40,7 @@
       (function() {
         const redirect = new URLSearchParams(window.location.search).get('redirect');
         if (redirect) {
-          history.replaceState(null, null, redirect);
+          history.replaceState(null, null, decodeURIComponent(redirect));
         }
       })();
     </script>
