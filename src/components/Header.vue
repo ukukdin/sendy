@@ -78,11 +78,48 @@ export default {
   },
   mounted() {
     this.checkAuthStatus()
+    // 로그인 상태 변경을 감지하기 위한 이벤트 리스너
+    window.addEventListener('storage', this.handleStorageChange)
+    window.addEventListener('authStateChange', this.handleAuthChange)
+    // 페이지 포커스 시에도 상태 확인
+    window.addEventListener('focus', this.checkAuthStatus)
+  },
+  beforeUnmount() {
+    // 메모리 누수 방지
+    window.removeEventListener('storage', this.handleStorageChange)
+    window.removeEventListener('authStateChange', this.handleAuthChange)
+    window.removeEventListener('focus', this.checkAuthStatus)
+  },
+  watch: {
+    // 라우터 변경 시마다 인증 상태 확인
+    '$route'() {
+      this.checkAuthStatus()
+    }
   },
   methods: {
     checkAuthStatus() {
       this.isLoggedIn = authService.isLoggedIn()
       this.currentUser = authService.getCurrentUser()
+    },
+    
+    // localStorage 변경 감지 (다른 탭에서의 로그인/로그아웃)
+    handleStorageChange(e) {
+      if (e.key === 'sendyUser') {
+        this.checkAuthStatus()
+      }
+    },
+    
+    // 커스텀 인증 상태 변경 이벤트 처리 (같은 탭에서의 로그인/로그아웃)
+    handleAuthChange(e) {
+      const { type, user } = e.detail
+      if (type === 'login') {
+        this.isLoggedIn = true
+        this.currentUser = user
+      } else if (type === 'logout') {
+        this.isLoggedIn = false
+        this.currentUser = null
+        this.showUserDropdown = false
+      }
     },
     
     toggleUserMenu() {

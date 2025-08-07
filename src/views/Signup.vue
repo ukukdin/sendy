@@ -100,13 +100,13 @@ export default {
         // 실제 API 호출 대신 시뮬레이션
         await new Promise(resolve => setTimeout(resolve, 1000))
         
-        // 회원가입 처리
-        const user = authService.signup(this.form)
+        // 회원가입 처리 (await 추가)
+        const user = await authService.signup(this.form)
         
         if (user) {
-          // 성공 시 로그인 페이지로 이동
-          this.$router.push('/login')
-          alert('회원가입이 완료되었습니다!')
+          // 성공 시 자동 로그인되므로 홈페이지로 이동
+          this.$router.push('/')
+          alert('회원가입이 완료되었습니다! 자동으로 로그인되었습니다.')
         } else {
           alert('회원가입 중 오류가 발생했습니다.')
         }

@@ -67,8 +67,8 @@ export default {
         // 실제 API 호출 대신 시뮬레이션
         await new Promise(resolve => setTimeout(resolve, 1000))
         
-        // 로그인 처리
-        const user = authService.login(this.form.email, this.form.password)
+        // 로그인 처리 (await 추가)
+        const user = await authService.login(this.form.email, this.form.password)
         
         if (user) {
           // 로그인 성공 시 홈페이지로 이동
@@ -78,6 +78,7 @@ export default {
           alert('이메일 또는 비밀번호가 올바르지 않습니다.')
         }
       } catch (error) {
+        console.error('Login error:', error)
         alert('로그인 중 오류가 발생했습니다.')
       } finally {
         this.loading = false

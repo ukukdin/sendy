@@ -26,6 +26,8 @@ export const authService = {
           balance: response.data.balance || 1000000
         }
         localStorage.setItem('sendyUser', JSON.stringify(user))
+        // 로그인 성공 이벤트 발생
+        this.emitAuthChange('login', user)
         return user
       } else {
         throw new Error(response.message || '로그인에 실패했습니다.')
@@ -41,6 +43,8 @@ export const authService = {
           balance: 1000000
         }
         localStorage.setItem('sendyUser', JSON.stringify(user))
+        // 로그인 성공 이벤트 발생
+        this.emitAuthChange('login', user)
         return user
       }
       return null
@@ -61,6 +65,8 @@ export const authService = {
           balance: 1000000
         }
         localStorage.setItem('sendyUser', JSON.stringify(user))
+        // 회원가입 성공 이벤트 발생
+        this.emitAuthChange('login', user)
         return user
       } else {
         throw new Error(response.message || '회원가입에 실패했습니다.')
@@ -76,6 +82,8 @@ export const authService = {
         balance: 1000000
       }
       localStorage.setItem('sendyUser', JSON.stringify(user))
+      // 회원가입 성공 이벤트 발생
+      this.emitAuthChange('login', user)
       return user
     }
   },
@@ -88,7 +96,17 @@ export const authService = {
       console.error('로그아웃 오류:', error)
     } finally {
       localStorage.removeItem('sendyUser')
+      // 로그아웃 이벤트 발생
+      this.emitAuthChange('logout', null)
     }
+  },
+
+  // 인증 상태 변경 이벤트 발생
+  emitAuthChange(type, user) {
+    const event = new CustomEvent('authStateChange', {
+      detail: { type, user }
+    })
+    window.dispatchEvent(event)
   },
 
   // 잔액 업데이트
