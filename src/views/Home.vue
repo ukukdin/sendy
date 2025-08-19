@@ -817,6 +817,15 @@ export default {
   width: max-content;
 }
 
+@keyframes scrollLeft {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
 .people-card {
   border-radius: 16px;
   padding: 30px;
