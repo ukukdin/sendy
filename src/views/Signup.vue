@@ -171,15 +171,16 @@ export default {
         if (result && result.user) {
           this.registeredUserId = result.user.id
           
-          if (result.needsEmailVerification) {
-            // 이메일 인증이 필요한 경우
-            this.showEmailVerification = true
-            alert('회원가입이 완료되었습니다! 이메일 인증을 진행해주세요.')
-          } else {
-            // 즉시 로그인 처리
-            this.$router.push('/')
-            alert('회원가입이 완료되었습니다!')
-          }
+                     // 회원가입 성공 - 이메일 인증 화면으로 이동
+           this.showEmailVerification = true
+           
+           // 이메일 인증 발송 자동 시도
+           try {
+             await authService.sendEmailVerification(this.form.email, this.registeredUserId)
+             console.log('이메일 인증 발송 완료')
+           } catch (emailError) {
+             console.warn('이메일 인증 발송 실패:', emailError)
+           }
         } else {
           alert('회원가입 중 오류가 발생했습니다.')
         }
