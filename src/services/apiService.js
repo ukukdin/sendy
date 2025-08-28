@@ -89,6 +89,30 @@ export const apiService = {
       }
     }
 
+    // 이메일 인증번호 확인 API 시뮬레이션
+    if (endpoint === '/users/auth/email/verify' && method === 'POST') {
+      const { verificationCode } = body
+      
+      // 간단한 시뮬레이션: 123456이면 성공, 그 외는 실패
+      if (verificationCode === '123456') {
+        return {
+          success: true,
+          message: '이메일 인증이 완료되었습니다.',
+          data: {
+            email: body.email,
+            userId: body.userId,
+            verifiedAt: new Date().toISOString()
+          }
+        }
+      } else {
+        return {
+          success: false,
+          message: '인증번호가 일치하지 않습니다. 다시 확인해주세요.',
+          error: 'VERIFICATION_CODE_MISMATCH'
+        }
+      }
+    }
+
     // 기본 성공 응답
     return {
       success: true,
@@ -143,6 +167,16 @@ export const authAPI = {
   async sendEmailVerification(email, userId) {
     // Swagger 스펙: POST /users/auth/email/send
     return apiService.post('/users/auth/email/send', { email, userId })
+  },
+
+  // 이메일 인증번호 확인
+  async verifyEmailCode(email, userId, verificationCode) {
+    // Swagger 스펙: POST /users/auth/email/verify
+    return apiService.post('/users/auth/email/verify', { 
+      email, 
+      userId, 
+      verificationCode 
+    })
   },
 
   // 로그인

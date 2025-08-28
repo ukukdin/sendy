@@ -83,18 +83,46 @@
         </button>
       </form>
       
-      <!-- 이메일 인증 안내 -->
+      <!-- 이메일 인증 -->
       <div v-if="showEmailVerification" class="email-verification">
         <div class="verification-icon">📧</div>
-        <h3>이메일 인증이 필요합니다</h3>
-        <p>{{ form.email }}로 인증 메일을 발송했습니다.</p>
-        <p>메일함을 확인하고 인증을 완료해주세요.</p>
+        <h3>이메일 인증번호 입력</h3>
+        <p>{{ form.email }}로 인증번호를 발송했습니다.</p>
+        <p class="verification-subtitle">메일함을 확인하고 6자리 인증번호를 입력해주세요.</p>
         
-        <button @click="resendEmail" class="resend-btn" :disabled="resendLoading">
-          {{ resendLoading ? '발송 중...' : '인증 메일 재발송' }}
-        </button>
+        <!-- 인증번호 입력 폼 -->
+        <form @submit.prevent="verifyEmailCode" class="verification-form">
+          <div class="form-group">
+            <label for="verificationCode">인증번호 *</label>
+            <input 
+              type="text" 
+              id="verificationCode" 
+              v-model="verificationCode" 
+              required
+              maxlength="6"
+              pattern="[0-9]{6}"
+              placeholder="123456"
+              class="verification-input"
+              :disabled="verifyLoading"
+            />
+          </div>
+          
+          <button type="submit" class="verify-btn" :disabled="verifyLoading || !verificationCode">
+            {{ verifyLoading ? '인증 중...' : '인증번호 확인' }}
+          </button>
+        </form>
         
-        <button @click="goToLogin" class="login-btn">
+        <!-- 인증번호 재발송 -->
+        <div class="resend-section">
+          <p class="resend-text">
+            인증번호를 받지 못하셨나요? 
+            <button @click="resendEmail" class="resend-link" :disabled="resendLoading">
+              {{ resendLoading ? '발송 중...' : '재발송' }}
+            </button>
+          </p>
+        </div>
+        
+        <button @click="goToLogin" class="back-btn">
           로그인 페이지로 이동
         </button>
       </div>
@@ -124,7 +152,9 @@ export default {
       loading: false,
       showEmailVerification: false,
       resendLoading: false,
-      registeredUserId: null
+      registeredUserId: null,
+      verificationCode: '',
+      verifyLoading: false
     }
   },
   methods: {
@@ -237,6 +267,47 @@ export default {
     // 생년월일 입력 시 숫자만 허용
     onBirthInput(event) {
       this.form.birth = event.target.value.replace(/[^0-9]/g, '')
+    },
+
+    // 이메일 인증번호 확인
+    async verifyEmailCode() {
+      if (!this.verificationCode || this.verificationCode.length !== 6) {
+        alert('6자리 인증번호를 정확히 입력해주세요.')
+        return
+      }
+
+      this.verifyLoading = true
+
+      try {
+        const result = await authService.verifyEmailCode(
+          this.form.email, 
+          this.registeredUserId, 
+          this.verificationCode
+        )
+
+        if (result.success) {
+          alert('이메일 인증이 완료되었습니다! 🎉')
+          this.$router.push('/login?verified=true')
+        } else {
+          alert(result.message || '인증번호가 일치하지 않습니다. 다시 확인해주세요.')
+        }
+      } catch (error) {
+        console.error('인증번호 확인 오류:', error)
+        
+        let errorMessage = '인증번호 확인 중 오류가 발생했습니다.'
+        
+        if (error.message.includes('만료')) {
+          errorMessage = '인증번호가 만료되었습니다. 재발송을 요청해주세요.'
+        } else if (error.message.includes('불일치')) {
+          errorMessage = '인증번호가 일치하지 않습니다. 다시 확인해주세요.'
+        } else if (error.message) {
+          errorMessage = error.message
+        }
+        
+        alert(errorMessage)
+      } finally {
+        this.verifyLoading = false
+      }
     }
   }
 }
@@ -357,6 +428,95 @@ export default {
   margin-bottom: 8px;
 }
 
+.verification-subtitle {
+  font-weight: 500;
+  color: #60A5FA !important;
+  margin-bottom: 24px !important;
+}
+
+/* 인증번호 입력 폼 스타일 */
+.verification-form {
+  margin: 24px 0;
+  text-align: left;
+}
+
+.verification-input {
+  text-align: center !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  letter-spacing: 2px !important;
+  padding: 16px !important;
+  border: 2px solid #e1e5e9 !important;
+  border-radius: 12px !important;
+  transition: all 0.3s ease !important;
+}
+
+.verification-input:focus {
+  border-color: #60A5FA !important;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1) !important;
+  transform: scale(1.02);
+}
+
+.verify-btn {
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  color: white;
+  border: none;
+  padding: 16px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  margin-top: 16px;
+}
+
+.verify-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.verify-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* 재발송 섹션 스타일 */
+.resend-section {
+  margin: 20px 0;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #60A5FA;
+}
+
+.resend-text {
+  color: #555 !important;
+  font-size: 14px !important;
+  margin: 0 !important;
+}
+
+.resend-link {
+  background: none;
+  border: none;
+  color: #60A5FA;
+  text-decoration: underline;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0;
+  margin-left: 4px;
+}
+
+.resend-link:hover:not(:disabled) {
+  color: #3B82F6;
+}
+
+.resend-link:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 .resend-btn {
   background: #f8f9fa;
   color: #60A5FA;
@@ -381,22 +541,24 @@ export default {
   cursor: not-allowed;
 }
 
-.login-btn {
-  background: linear-gradient(135deg, #60A5FA 0%, #06B6D4 100%);
-  color: white;
-  border: none;
+.back-btn {
+  background: #f8f9fa;
+  color: #666;
+  border: 1px solid #e1e5e9;
   padding: 12px 24px;
   border-radius: 8px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
   width: 100%;
+  margin-top: 16px;
 }
 
-.login-btn:hover {
+.back-btn:hover {
+  background: #e9ecef;
+  border-color: #adb5bd;
   transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(96, 165, 250, 0.3);
 }
 
 .login-link {

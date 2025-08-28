@@ -108,6 +108,26 @@ export const authService = {
     }
   },
 
+  // 이메일 인증번호 확인
+  async verifyEmailCode(email, userId, verificationCode) {
+    try {
+      const response = await authAPI.verifyEmailCode(email, userId, verificationCode)
+      
+      if (response.success) {
+        return {
+          success: true,
+          message: '이메일 인증이 완료되었습니다.',
+          data: response.data
+        }
+      } else {
+        throw new Error(response.message || '인증번호가 일치하지 않습니다.')
+      }
+    } catch (error) {
+      console.error('이메일 인증번호 확인 오류:', error)
+      throw error
+    }
+  },
+
   // 로그아웃
   async logout() {
     try {
