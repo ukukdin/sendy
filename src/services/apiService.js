@@ -5,8 +5,12 @@ const getAPIBaseURL = () => {
     return '/api'
   }
   
-  // 프로덕션 환경: 실제 API 서버 URL
-  // TODO: 실제 배포된 백엔드 서버 URL로 변경 필요
+  // 프로덕션 환경: GitHub Pages에서는 Mock API 사용
+  if (location.hostname === 'ukukdin.github.io') {
+    return 'mock'  // Mock API 모드
+  }
+  
+  // 기타 프로덕션 환경: 실제 API 서버 URL
   return 'http://localhost:8080/api'
 }
 
@@ -15,6 +19,11 @@ const API_BASE_URL = getAPIBaseURL()
 export const apiService = {
   // 기본 API 호출 함수
   async request(endpoint, options = {}) {
+    // Mock API 모드 (GitHub Pages용)
+    if (API_BASE_URL === 'mock') {
+      return this.mockRequest(endpoint, options)
+    }
+
     const url = `${API_BASE_URL}${endpoint}`
     
     const defaultOptions = {
@@ -40,6 +49,51 @@ export const apiService = {
     } catch (error) {
       console.error('API 호출 오류:', error)
       throw error
+    }
+  },
+
+  // Mock API 응답 (GitHub Pages용)
+  async mockRequest(endpoint, options = {}) {
+    // 실제 API 호출을 시뮬레이션하기 위한 지연
+    await new Promise(resolve => setTimeout(resolve, 500))
+
+    const method = options.method || 'GET'
+    const body = options.body ? JSON.parse(options.body) : null
+
+    console.log(`[Mock API] ${method} ${endpoint}`, body)
+
+    // 회원가입 API 시뮬레이션
+    if (endpoint === '/users' && method === 'POST') {
+      return {
+        success: true,
+        id: Date.now(),
+        message: '회원가입이 완료되었습니다.',
+        data: {
+          id: Date.now(),
+          name: body.name,
+          email: body.email,
+          phoneNumber: body.phoneNumber
+        }
+      }
+    }
+
+    // 이메일 인증 발송 API 시뮬레이션
+    if (endpoint === '/users/auth/email/send' && method === 'POST') {
+      return {
+        success: true,
+        message: '인증 메일이 발송되었습니다.',
+        data: {
+          email: body.email,
+          sentAt: new Date().toISOString()
+        }
+      }
+    }
+
+    // 기본 성공 응답
+    return {
+      success: true,
+      message: 'Mock API 응답입니다.',
+      data: {}
     }
   },
 
