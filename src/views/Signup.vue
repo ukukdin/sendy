@@ -1,43 +1,46 @@
 <template>
   <div class="signup-container">
     <div class="signup-card">
-      <h2>회원가입</h2>
-      <form @submit.prevent="handleSignup" class="signup-form">
+      <h2>SENDY 회원가입</h2>
+      
+      <!-- 회원가입 폼 -->
+      <form v-if="!showEmailVerification" @submit.prevent="handleSignup" class="signup-form">
         <div class="form-group">
-          <label for="username">사용자명</label>
+          <label for="name">이름 *</label>
           <input 
             type="text" 
-            id="username" 
-            v-model="form.username" 
+            id="name" 
+            v-model="form.name" 
             required
-            placeholder="사용자명을 입력하세요"
+            placeholder="실명을 입력하세요"
           />
         </div>
         
         <div class="form-group">
-          <label for="email">이메일</label>
+          <label for="email">이메일 *</label>
           <input 
             type="email" 
             id="email" 
             v-model="form.email" 
             required
-            placeholder="이메일을 입력하세요"
+            placeholder="example@gmail.com"
           />
         </div>
         
         <div class="form-group">
-          <label for="password">비밀번호</label>
+          <label for="password">비밀번호 *</label>
           <input 
             type="password" 
             id="password" 
             v-model="form.password" 
             required
-            placeholder="비밀번호를 입력하세요"
+            minlength="6"
+            placeholder="6자 이상 입력하세요"
           />
         </div>
         
         <div class="form-group">
-          <label for="confirmPassword">비밀번호 확인</label>
+          <label for="confirmPassword">비밀번호 확인 *</label>
           <input 
             type="password" 
             id="confirmPassword" 
@@ -48,13 +51,30 @@
         </div>
         
         <div class="form-group">
-          <label for="phone">전화번호</label>
+          <label for="phoneNumber">전화번호 *</label>
           <input 
             type="tel" 
-            id="phone" 
-            v-model="form.phone" 
+            id="phoneNumber" 
+            v-model="form.phoneNumber" 
+            @input="onPhoneInput"
             required
-            placeholder="전화번호를 입력하세요"
+            pattern="010[0-9]{8}"
+            placeholder="01012345678 (숫자만)"
+            maxlength="11"
+          />
+        </div>
+        
+        <div class="form-group">
+          <label for="birth">생년월일 *</label>
+          <input 
+            type="text" 
+            id="birth" 
+            v-model="form.birth" 
+            @input="onBirthInput"
+            required
+            pattern="[0-9]{8}"
+            placeholder="19900101 (YYYYMMDD)"
+            maxlength="8"
           />
         </div>
         
@@ -63,7 +83,23 @@
         </button>
       </form>
       
-      <div class="login-link">
+      <!-- 이메일 인증 안내 -->
+      <div v-if="showEmailVerification" class="email-verification">
+        <div class="verification-icon">📧</div>
+        <h3>이메일 인증이 필요합니다</h3>
+        <p>{{ form.email }}로 인증 메일을 발송했습니다.</p>
+        <p>메일함을 확인하고 인증을 완료해주세요.</p>
+        
+        <button @click="resendEmail" class="resend-btn" :disabled="resendLoading">
+          {{ resendLoading ? '발송 중...' : '인증 메일 재발송' }}
+        </button>
+        
+        <button @click="goToLogin" class="login-btn">
+          로그인 페이지로 이동
+        </button>
+      </div>
+      
+      <div v-if="!showEmailVerification" class="login-link">
         이미 계정이 있으신가요? <router-link to="/login">로그인</router-link>
       </div>
     </div>
@@ -78,43 +114,128 @@ export default {
   data() {
     return {
       form: {
-        username: '',
+        name: '',
         email: '',
         password: '',
         confirmPassword: '',
-        phone: ''
+        phoneNumber: '',
+        birth: ''
       },
-      loading: false
+      loading: false,
+      showEmailVerification: false,
+      resendLoading: false,
+      registeredUserId: null
     }
   },
   methods: {
-    async handleSignup() {
+    // 폼 유효성 검사
+    validateForm() {
       if (this.form.password !== this.form.confirmPassword) {
         alert('비밀번호가 일치하지 않습니다.')
+        return false
+      }
+      
+      if (this.form.password.length < 6) {
+        alert('비밀번호는 6자 이상이어야 합니다.')
+        return false
+      }
+      
+      // 전화번호 형식 검사 (010으로 시작하는 11자리 숫자)
+      const phoneRegex = /^010[0-9]{8}$/
+      if (!phoneRegex.test(this.form.phoneNumber)) {
+        alert('전화번호는 010으로 시작하는 11자리 숫자여야 합니다. (예: 01012345678)')
+        return false
+      }
+      
+      // 생년월일 형식 검사 (8자리 숫자)
+      const birthRegex = /^[0-9]{8}$/
+      if (!birthRegex.test(this.form.birth)) {
+        alert('생년월일은 8자리 숫자로 입력해주세요. (예: 19900101)')
+        return false
+      }
+      
+      return true
+    },
+
+    async handleSignup() {
+      if (!this.validateForm()) {
         return
       }
       
       this.loading = true
       
       try {
-        // 실제 API 호출 대신 시뮬레이션
-        await new Promise(resolve => setTimeout(resolve, 1000))
+        // Swagger 스펙에 맞는 회원가입 API 호출
+        const result = await authService.signup(this.form)
         
-        // 회원가입 처리 (await 추가)
-        const user = await authService.signup(this.form)
-        
-        if (user) {
-          // 성공 시 자동 로그인되므로 홈페이지로 이동
-          this.$router.push('/')
-          alert('회원가입이 완료되었습니다! 자동으로 로그인되었습니다.')
+        if (result && result.user) {
+          this.registeredUserId = result.user.id
+          
+          if (result.needsEmailVerification) {
+            // 이메일 인증이 필요한 경우
+            this.showEmailVerification = true
+            alert('회원가입이 완료되었습니다! 이메일 인증을 진행해주세요.')
+          } else {
+            // 즉시 로그인 처리
+            this.$router.push('/')
+            alert('회원가입이 완료되었습니다!')
+          }
         } else {
           alert('회원가입 중 오류가 발생했습니다.')
         }
       } catch (error) {
-        alert('회원가입 중 오류가 발생했습니다.')
+        console.error('회원가입 오류:', error)
+        
+        // 구체적인 오류 메시지 표시
+        let errorMessage = '회원가입 중 오류가 발생했습니다.'
+        
+        if (error.message.includes('이미 존재')) {
+          errorMessage = '이미 가입된 이메일입니다.'
+        } else if (error.message.includes('형식')) {
+          errorMessage = '입력 정보의 형식이 올바르지 않습니다.'
+        } else if (error.message) {
+          errorMessage = error.message
+        }
+        
+        alert(errorMessage)
       } finally {
         this.loading = false
       }
+    },
+
+    // 이메일 인증 재발송
+    async resendEmail() {
+      if (!this.form.email || !this.registeredUserId) {
+        alert('이메일 정보를 찾을 수 없습니다.')
+        return
+      }
+      
+      this.resendLoading = true
+      
+      try {
+        await authService.sendEmailVerification(this.form.email, this.registeredUserId)
+        alert('인증 메일을 재발송했습니다. 메일함을 확인해주세요.')
+      } catch (error) {
+        console.error('이메일 재발송 오류:', error)
+        alert('이메일 재발송 중 오류가 발생했습니다.')
+      } finally {
+        this.resendLoading = false
+      }
+    },
+
+    // 로그인 페이지로 이동
+    goToLogin() {
+      this.$router.push('/login')
+    },
+
+    // 전화번호 입력 시 숫자만 허용
+    onPhoneInput(event) {
+      this.form.phoneNumber = event.target.value.replace(/[^0-9]/g, '')
+    },
+
+    // 생년월일 입력 시 숫자만 허용
+    onBirthInput(event) {
+      this.form.birth = event.target.value.replace(/[^0-9]/g, '')
     }
   }
 }
@@ -135,7 +256,7 @@ export default {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   padding: 40px;
   width: 100%;
-  max-width: 400px;
+  max-width: 450px;
 }
 
 .signup-card h2 {
@@ -143,18 +264,22 @@ export default {
   margin-bottom: 30px;
   color: #333;
   font-size: 24px;
+  background: linear-gradient(135deg, #60A5FA 0%, #06B6D4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .signup-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .form-group label {
@@ -173,7 +298,12 @@ export default {
 
 .form-group input:focus {
   outline: none;
-  border-color: #007bff;
+  border-color: #60A5FA;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+}
+
+.form-group input:invalid {
+  border-color: #ef4444;
 }
 
 .signup-btn {
@@ -185,20 +315,87 @@ export default {
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: all 0.2s ease;
   margin-top: 10px;
   width: 100%;
   min-height: 48px;
-  min-width: 100px;
 }
 
 .signup-btn:hover:not(:disabled) {
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(96, 165, 250, 0.4);
 }
 
 .signup-btn:disabled {
   opacity: 0.7;
   cursor: not-allowed;
+  transform: none;
+}
+
+/* 이메일 인증 화면 스타일 */
+.email-verification {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.verification-icon {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+.email-verification h3 {
+  color: #333;
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+
+.email-verification p {
+  color: #666;
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.resend-btn {
+  background: #f8f9fa;
+  color: #60A5FA;
+  border: 2px solid #60A5FA;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin: 20px 0 10px 0;
+  width: 100%;
+}
+
+.resend-btn:hover:not(:disabled) {
+  background: #60A5FA;
+  color: white;
+}
+
+.resend-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.login-btn {
+  background: linear-gradient(135deg, #60A5FA 0%, #06B6D4 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.login-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(96, 165, 250, 0.3);
 }
 
 .login-link {
@@ -209,12 +406,40 @@ export default {
 }
 
 .login-link a {
-  color: #007bff;
+  color: #60A5FA;
   text-decoration: none;
   font-weight: 600;
 }
 
 .login-link a:hover {
   text-decoration: underline;
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+  .signup-container {
+    padding: 10px;
+    min-height: 70vh;
+  }
+  
+  .signup-card {
+    padding: 30px 20px;
+    max-width: 100%;
+  }
+  
+  .signup-card h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .form-group input {
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+  
+  .signup-btn {
+    padding: 14px 20px;
+    font-size: 15px;
+  }
 }
 </style> 

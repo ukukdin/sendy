@@ -61,9 +61,23 @@ export const apiService = {
 
 // 인증 관련 API
 export const authAPI = {
-  // 회원가입
+  // 회원가입 (Swagger 스펙에 맞게 수정)
   async signup(userData) {
-    return apiService.post('/auth/signup', userData)
+    // Swagger 스펙: POST /users
+    const signupData = {
+      name: userData.name || userData.username,
+      password: userData.password,
+      phoneNumber: userData.phone || userData.phoneNumber,
+      email: userData.email,
+      birth: userData.birth
+    }
+    return apiService.post('/users', signupData)
+  },
+
+  // 이메일 인증 발송
+  async sendEmailVerification(email, userId) {
+    // Swagger 스펙: POST /users/auth/email/send
+    return apiService.post('/users/auth/email/send', { email, userId })
   },
 
   // 로그인

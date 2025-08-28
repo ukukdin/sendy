@@ -51,40 +51,60 @@ export const authService = {
     }
   },
 
-  // 회원가입
+  // 회원가입 (Swagger 스펙에 맞게 수정)
   async signup(userData) {
     try {
-      const response = await authAPI.signup(userData)
+      // Swagger 스펙에 맞는 데이터 형식으로 변환
+      const signupData = {
+        name: userData.name,
+        password: userData.password,
+        phoneNumber: userData.phoneNumber,
+        email: userData.email,
+        birth: userData.birth
+      }
+
+      const response = await authAPI.signup(signupData)
       
-      if (response.success) {
+      if (response.success || response.id) {
         const user = {
+          id: response.id || Date.now(),
           email: userData.email,
-          name: userData.username,
-          phone: userData.phone,
+          name: userData.name,
+          phone: userData.phoneNumber,
+          birth: userData.birth,
           role: 'user',
-          balance: 1000000
+          balance: 1000000,
+          isEmailVerified: false
         }
         localStorage.setItem('sendyUser', JSON.stringify(user))
-        // 회원가입 성공 이벤트 발생
-        this.emitAuthChange('login', user)
-        return user
+        
+        // 이메일 인증 발송 시도
+        try {
+          await this.sendEmailVerification(userData.email, user.id)
+        } catch (emailError) {
+          console.warn('이메일 인증 발송 실패:', emailError)
+        }
+        
+        // 회원가입 성공 이벤트 발생 (이메일 인증 필요)
+        this.emitAuthChange('signup', user)
+        return { user, needsEmailVerification: true }
       } else {
         throw new Error(response.message || '회원가입에 실패했습니다.')
       }
     } catch (error) {
       console.error('회원가입 오류:', error)
-      // 백엔드 연결 실패 시 로컬 시뮬레이션
-      const user = {
-        email: userData.email,
-        name: userData.username,
-        phone: userData.phone,
-        role: 'user',
-        balance: 1000000
-      }
-      localStorage.setItem('sendyUser', JSON.stringify(user))
-      // 회원가입 성공 이벤트 발생
-      this.emitAuthChange('login', user)
-      return user
+      throw error
+    }
+  },
+
+  // 이메일 인증 발송
+  async sendEmailVerification(email, userId) {
+    try {
+      const response = await authAPI.sendEmailVerification(email, userId)
+      return response
+    } catch (error) {
+      console.error('이메일 인증 발송 오류:', error)
+      throw error
     }
   },
 
