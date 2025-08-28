@@ -28,3 +28,12 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+
+# 빌드 파일들 (GitHub Actions에서만 관리)
+index.html
+404.html
+assets/
+global.css
+*.ico
+*.svg
+*.png
