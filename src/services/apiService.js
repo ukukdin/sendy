@@ -1,5 +1,16 @@
-// SENDY API 서비스
-const API_BASE_URL = 'http://localhost:8080/api'
+// SENDY API 서비스 - 환경별 설정
+const getAPIBaseURL = () => {
+  // 개발 환경: Vite 프록시 사용 (CORS 우회)
+  if (import.meta.env.DEV) {
+    return '/api'
+  }
+  
+  // 프로덕션 환경: 실제 API 서버 URL
+  // TODO: 실제 배포된 백엔드 서버 URL로 변경 필요
+  return 'http://localhost:8080/api'
+}
+
+const API_BASE_URL = getAPIBaseURL()
 
 export const apiService = {
   // 기본 API 호출 함수

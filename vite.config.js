@@ -15,6 +15,16 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  // 개발 서버 설정 (CORS 해결을 위한 프록시)
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        secure: false
+      }
+    }
+  },
   // GitHub Pages 배포를 위한 설정
   base: process.env.NODE_ENV === 'production' ? '/sendy/' : '/',
   build: {
