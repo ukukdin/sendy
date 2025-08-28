@@ -10,7 +10,7 @@ const Header = {
         <div class="header-content">
           <div class="logo">
             <router-link to="/" class="logo-link">
-              <img src="/sendy-real-icon.svg" alt="SENDY" class="logo-icon" />
+              <img src="./sendy-real-icon.svg" alt="SENDY" class="logo-icon" />
               <span class="logo-text">SENDY</span>
             </router-link>
           </div>
@@ -91,11 +91,21 @@ const Posts = {
   `
 };
 
+const Signup = {
+  template: `
+    <div class="page">
+      <h1>회원가입</h1>
+      <p>새 계정을 만드세요.</p>
+    </div>
+  `
+};
+
 // 라우터 설정
 const routes = [
   { path: '/', name: 'Home', component: Home },
   { path: '/about', name: 'About', component: About },
   { path: '/login', name: 'Login', component: Login },
+  { path: '/signup', name: 'Signup', component: Signup },
   { path: '/posts', name: 'Posts', component: Posts }
 ];
 
